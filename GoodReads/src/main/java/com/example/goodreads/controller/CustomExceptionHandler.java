@@ -1,4 +1,4 @@
-package com.example.goodreads.controler;
+package com.example.goodreads.controller;
 
 import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.UnauthorizedException;
