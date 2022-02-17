@@ -12,10 +12,9 @@ public class Author {
     @Column
     private String authorName;
 
-// TODO: Many to many
-//    @OneToMany(mappedBy = "authors")
-//    private Set<Book> books;
-
     @OneToMany(mappedBy = "authors")
     private Set<Quote> quotes;
+
+    @ManyToMany(mappedBy = "books_have_authors")
+    private Set<Book> books;
 }

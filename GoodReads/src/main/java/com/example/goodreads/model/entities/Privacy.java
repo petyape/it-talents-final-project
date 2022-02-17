@@ -6,9 +6,8 @@ import javax.persistence.*;
 @Table(name = "privacy")
 public class Privacy {
     @Id
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int privacyId;
     @Column
     private User.Visibility viewProfile;
     @Column
@@ -27,4 +26,8 @@ public class Privacy {
     private String challengeQuestion;
     @Column
     private Boolean promptToRecommendBooks;
+
+    @OneToOne
+    @JoinColumn(name = "privacy_id")
+    private User user;
 }

@@ -24,8 +24,8 @@ public class Book {
     private LocalDate publishDate;
     @Column
     private String publisher;
-
-    // TODO: cover url
+    @Column
+    private String coverUrl;
 
     @ManyToOne
     @JoinColumn(name = "genre_id")
@@ -33,15 +33,28 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "language_id")
     private Language language;
+
     @OneToMany(mappedBy = "books")
     private Set<Rating> ratings;
     @OneToMany(mappedBy = "books")
     private Set<Review> reviews;
     @OneToMany(mappedBy = "books")
     private Set<Quote> quotes;
+    @OneToMany(mappedBy = "books")
+    private Set<UsersBooks> booksPerUser;
 
-// TODO: Many to many
-//    private Set<Author> authors;
-//    private Set<Book> editions;
+    @ManyToMany(cascade={CascadeType.ALL})
+    @JoinTable(name="books_have_editions",
+            joinColumns={@JoinColumn(name="book_id")},
+            inverseJoinColumns={@JoinColumn(name="edition_id")})
+    private Set<Book> editions;
+    @ManyToMany(mappedBy="editions")
+    private Set<Book> bookEditions;
 
+    @ManyToMany
+    @JoinTable(
+            name = "books_have_authors",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id"))
+    private Set<Author> authors;
 }

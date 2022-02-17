@@ -11,6 +11,12 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int messageId;
+    @Column
+    private LocalDate sentAt;
+    @Column
+    private Boolean isRead;
+    @Column
+    private MessageFolder receiverFolder;
 
     @ManyToOne
     @JoinColumn(name = "sender_id", referencedColumnName = "user_id")
@@ -18,11 +24,4 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "receiver_id", referencedColumnName = "user_id")
     private User receiver;
-
-    @Column
-    private LocalDate sentAt;
-    @Column
-    private Boolean isRead;
-    @Column
-    private MessageFolder receiverFolder;
 }

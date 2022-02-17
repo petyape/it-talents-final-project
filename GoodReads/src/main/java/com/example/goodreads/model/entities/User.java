@@ -32,9 +32,8 @@ public class User {
     @Column
     @JsonIgnore
     private String password;
-
-    // TODO: photo url
-
+    @Column
+    private String photoUrl;
     @Column
     private Gender gender;
     @Column
@@ -58,24 +57,45 @@ public class User {
     @Column
     private String aboutMe;
 
-    @ManyToOne
-    @JoinColumn(name = "town_id")
-    private Town town;
+    @OneToOne
+    @JoinColumn(name = "adress_id")
+    private Address address;
+    @OneToOne
+    @JoinColumn(name = "privacy_id")
+    private Privacy privacy;
+
     @OneToMany(mappedBy = "users")
     private Set<Message> messagesSent;
     @OneToMany(mappedBy = "users")
     private Set<Message> messagesReceived;
     @OneToMany(mappedBy = "users")
     private Set<Review> comments;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private Privacy privacy;
     @OneToMany(mappedBy = "users")
     private Set<Quote> quotes;
     @OneToMany(mappedBy = "users")
     private Set<Rating> ratings;
+    @OneToMany(mappedBy = "users")
+    private Set<UsersBooks> books;
 
-// TODO: Many to many
-//    private Map<Bookshelf, Book> books;
-//    private Set<User> friends;
+    @ManyToMany(cascade={CascadeType.ALL})
+    @JoinTable(name="users_have_friends",
+            joinColumns={@JoinColumn(name="user_id")},
+            inverseJoinColumns={@JoinColumn(name="friend_id")})
+    private Set<User> friends;
+    @ManyToMany(mappedBy="friends")
+    private Set<User> mates;
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_like_genres",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private Set<Genre> favoriteGenres;
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_like_quotes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "quote_id"))
+    private Set<Genre> favoriteQuotes;
 }

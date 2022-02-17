@@ -23,4 +23,7 @@ public class Quote {
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
+
+    @ManyToMany(mappedBy = "users_like_quotes")
+    private Set<User> likes;
 }

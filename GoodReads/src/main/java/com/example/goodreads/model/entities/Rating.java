@@ -10,6 +10,7 @@ public class Rating {
     private int ratingId;
     @Column
     private int rating;
+
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;

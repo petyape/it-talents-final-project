@@ -14,6 +14,7 @@ public class Review {
     private String review;
     @Column
     private LocalDate reviewDate;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -21,6 +22,11 @@ public class Review {
     @JoinColumn(name = "book_id")
     private Book book;
 
-// TODO : Many to many
-//    private Set<Review> comments;
+    @ManyToMany(cascade={CascadeType.ALL})
+    @JoinTable(name="reviews_have_comments",
+            joinColumns={@JoinColumn(name="review_id")},
+            inverseJoinColumns={@JoinColumn(name="comment_id")})
+    private Set<Review> comments;
+    @ManyToMany(mappedBy="comments")
+    private Set<Review> reviews;
 }
