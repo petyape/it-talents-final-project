@@ -18,6 +18,4 @@ public class PrivacyDTO {
     private Boolean allowSearchByEmail;
     private String challengeQuestion;
     private Boolean promptToRecommendBooks;
-
-
 }

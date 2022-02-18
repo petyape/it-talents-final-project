@@ -1,6 +1,7 @@
 package com.example.goodreads.controller;
 
 import com.example.goodreads.exceptions.UnauthorizedException;
+import com.example.goodreads.model.dto.userDTO.LoginUserDTO;
 import com.example.goodreads.model.dto.userDTO.RegisterUserDTO;
 import com.example.goodreads.model.dto.userDTO.UserResponseDTO;
 import com.example.goodreads.model.dto.userDTO.UserWithAddressDTO;
@@ -29,16 +30,16 @@ public class UserController {
 
     @PostMapping("/login")
     @ResponseBody
-    public UserResponseDTO login(@RequestBody User user, HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<UserResponseDTO> login(@RequestBody LoginUserDTO user, HttpSession session, HttpServletRequest request) {
         String email = user.getEmail();
         String pass = user.getPassword();
         User u = userService.login(email, pass);
         session.setAttribute(USER_ID, u.getUserId());
         session.setAttribute(LOGGED_FROM, request.getRemoteAddr());
         session.setAttribute(LOGGED, true);
-        return mapper.map(u, UserResponseDTO.class);
+        UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
+        return ResponseEntity.ok(dto);
     }
-
 
     @PostMapping("/users")
     public ResponseEntity<UserResponseDTO> register(@RequestBody RegisterUserDTO user, HttpSession session, HttpServletRequest request) {

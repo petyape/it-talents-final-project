@@ -3,8 +3,8 @@ POST localhost:8484/login
 Content-Type: application/json
 
 {
-  "email" : "petya.peteva2@gmail.com",
-  "pass" : "Aa@!l123"
+  "email" : "petygm@gmail.com",
+  "password" : "Aa@!lkjl123"
 }
 
 ### register
@@ -34,7 +34,7 @@ Content-Type: application/json
 }
 
 
-### gelete
+### delete
 DELETE localhost:8484/test_table/1
 Content-Type: application/json
 

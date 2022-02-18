@@ -57,5 +57,4 @@ public class Privacy {
 
     @Column
     private Boolean promptToRecommendBooks;
-
 }
