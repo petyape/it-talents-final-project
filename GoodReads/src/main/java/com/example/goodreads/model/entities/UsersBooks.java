@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 @Entity
 public class UsersBooks {
+
     @EmbeddedId
     UsersBooksKey id;
 
@@ -11,10 +12,12 @@ public class UsersBooks {
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     private User user;
+
     @ManyToOne
     @MapsId("bookId")
     @JoinColumn(name = "book_id")
     private Book book;
+
     @ManyToOne
     @JoinColumn(name = "bookshelf_id")
     private Bookshelf bookshelf;

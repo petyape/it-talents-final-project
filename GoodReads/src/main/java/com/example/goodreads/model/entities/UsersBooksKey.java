@@ -8,8 +8,10 @@ import java.io.Serializable;
 @Embeddable
 @Data
 public class UsersBooksKey implements Serializable {
+
     @Column
     int userId;
+
     @Column
     int bookId;
 }

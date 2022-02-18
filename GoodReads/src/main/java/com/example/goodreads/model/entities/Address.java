@@ -12,18 +12,20 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class Address {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "adress_id")
     private int addressId;
+
     @Column
     private String townName;
+
     @Column
     private int regionCode;
+
     @Column
     private String countryName;
 
-    @OneToOne
-    @JoinColumn(name = "adress_id")
-    private User user;
+
 }

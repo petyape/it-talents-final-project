@@ -46,62 +46,86 @@ public class User {
     }
 
     @Id
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
+
     @Column
     private String email;
+
     @Column
     private String firstName;
+
     @Column
     private String middleName;
+
     @Column
     private String lastName;
+
     @Column
     @JsonIgnore
     private String password;
+
     @Column
     private String photoUrl;
+
     @Column
     private char gender;
+
     @Column
     private String username;
+
     @Column
     private Boolean showLastName;
+
     @Column
     private Boolean isReverseNameOrder;
+
     @Column
     private char genderViewableBy;
+
     @Column
     private char locationViewableBy;
+
     @Column
     private LocalDate dateOfBirth;
+
     @Column
     private String webSite;
+
     @Column
     private String interests;
+
     @Column
     private String booksPreferences;
+
     @Column
     private String aboutMe;
 
     @OneToOne
     @JoinColumn(name = "adress_id")
     private Address address;
+
     @OneToOne
     @JoinColumn(name = "privacy_id")
     private Privacy privacy;
 
-    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
     private Set<Message> messagesSent;
-    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY)
     private Set<Message> messagesReceived;
-    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Review> comments;
-    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Quote> quotes;
-    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Rating> ratings;
-    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<UsersBooks> books;
 
     @ManyToMany(cascade={CascadeType.ALL})
@@ -109,6 +133,7 @@ public class User {
             joinColumns={@JoinColumn(name="user_id")},
             inverseJoinColumns={@JoinColumn(name="friend_id")})
     private Set<User> friends;
+
     @ManyToMany(mappedBy="friends", fetch = FetchType.LAZY)
     private Set<User> mates;
 

@@ -49,7 +49,7 @@ public class Converter {
             throw new NullPointerException("Empty parameters!");
         }
         Address newAddress = mapper.map(dto, Address.class);
-        newAddress.setUser(user);
+        
         return newAddress;
     }
 }

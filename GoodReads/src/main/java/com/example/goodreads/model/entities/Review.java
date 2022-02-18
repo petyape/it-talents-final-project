@@ -7,17 +7,21 @@ import java.util.Set;
 @Entity
 @Table(name = "reviews")
 public class Review {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int reviewId;
+
     @Column
     private String review;
+
     @Column
     private LocalDate reviewDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
@@ -27,6 +31,7 @@ public class Review {
             joinColumns={@JoinColumn(name="review_id")},
             inverseJoinColumns={@JoinColumn(name="comment_id")})
     private Set<Review> comments;
+
     @ManyToMany(mappedBy="comments", fetch = FetchType.LAZY)
     private Set<Review> reviews;
 }
