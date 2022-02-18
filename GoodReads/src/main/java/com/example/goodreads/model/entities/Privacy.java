@@ -9,7 +9,7 @@ public class Privacy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int privacyId;
     @Column
-    private User.Visibility viewProfile;
+    private char viewProfile;
     @Column
     private Boolean canNonFriendsFollow;
     @Column

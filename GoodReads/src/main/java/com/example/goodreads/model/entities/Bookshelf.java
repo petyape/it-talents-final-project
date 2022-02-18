@@ -12,6 +12,6 @@ public class Bookshelf {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "bookshelves")
+    @OneToMany(mappedBy = "bookshelves", fetch = FetchType.LAZY)
     private Set<UsersBooks> booksPerUser;
 }

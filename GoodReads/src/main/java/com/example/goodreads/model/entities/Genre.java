@@ -12,9 +12,9 @@ public class Genre {
     @Column
     private String genreName;
 
-    @OneToMany(mappedBy = "genres")
+    @OneToMany(mappedBy = "genres", fetch = FetchType.LAZY)
     private Set<Book> books;
 
-    @ManyToMany(mappedBy = "users_like_genres")
+    @ManyToMany(mappedBy = "users_like_genres", fetch = FetchType.LAZY)
     private Set<User> likes;
 }

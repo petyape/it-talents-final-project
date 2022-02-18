@@ -24,6 +24,6 @@ public class Quote {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    @ManyToMany(mappedBy = "users_like_quotes")
+    @ManyToMany(mappedBy = "users_like_quotes", fetch = FetchType.LAZY)
     private Set<User> likes;
 }
