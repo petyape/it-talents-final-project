@@ -12,9 +12,9 @@ public class Author {
     @Column
     private String authorName;
 
-    @OneToMany(mappedBy = "authors")
+    @OneToMany(mappedBy = "authors", fetch = FetchType.LAZY)
     private Set<Quote> quotes;
 
-    @ManyToMany(mappedBy = "books_have_authors")
+    @ManyToMany(mappedBy = "books_have_authors", fetch = FetchType.LAZY)
     private Set<Book> books;
 }

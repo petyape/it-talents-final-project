@@ -11,6 +11,6 @@ public class Language {
     @Column
     private String language;
 
-    @OneToMany(mappedBy = "languages")
+    @OneToMany(mappedBy = "languages", fetch = FetchType.LAZY)
     private Set<Book> books;
 }

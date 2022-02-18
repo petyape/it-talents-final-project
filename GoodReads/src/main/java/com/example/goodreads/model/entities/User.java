@@ -15,8 +15,35 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class User {
-    private enum Gender{MALE, FEMALE, CUSTOM}
-    enum Visibility{EVERYONE, FRIENDS, NONE}
+    public enum Gender{
+        MALE('m'), FEMALE('f'), CUSTOM('c'), NONE('n');
+
+        public final char symbol;
+        Gender(char symbol){
+            this.symbol = symbol;
+        }
+
+        public static boolean isValidGender(char symbol) {
+            return (symbol == NONE.symbol ||
+                    symbol == MALE.symbol ||
+                    symbol == FEMALE.symbol ||
+                    symbol == CUSTOM.symbol);
+        }
+    }
+
+    public enum Visibility{EVERYONE('e'), FRIENDS('f'), NONE('n');
+
+        public final char symbol;
+        Visibility(char symbol){
+            this.symbol = symbol;
+        }
+
+        public static boolean isValidVisibility(char symbol) {
+            return (symbol == NONE.symbol ||
+                    symbol == EVERYONE.symbol ||
+                    symbol == FRIENDS.symbol);
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +62,7 @@ public class User {
     @Column
     private String photoUrl;
     @Column
-    private Gender gender;
+    private char gender;
     @Column
     private String username;
     @Column
@@ -43,9 +70,9 @@ public class User {
     @Column
     private Boolean isReverseNameOrder;
     @Column
-    private Visibility genderViewableBy;
+    private char genderViewableBy;
     @Column
-    private Visibility locationViewableBy;
+    private char locationViewableBy;
     @Column
     private LocalDate dateOfBirth;
     @Column
@@ -64,17 +91,17 @@ public class User {
     @JoinColumn(name = "privacy_id")
     private Privacy privacy;
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private Set<Message> messagesSent;
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private Set<Message> messagesReceived;
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private Set<Review> comments;
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private Set<Quote> quotes;
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private Set<Rating> ratings;
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private Set<UsersBooks> books;
 
     @ManyToMany(cascade={CascadeType.ALL})
@@ -82,7 +109,7 @@ public class User {
             joinColumns={@JoinColumn(name="user_id")},
             inverseJoinColumns={@JoinColumn(name="friend_id")})
     private Set<User> friends;
-    @ManyToMany(mappedBy="friends")
+    @ManyToMany(mappedBy="friends", fetch = FetchType.LAZY)
     private Set<User> mates;
 
     @ManyToMany

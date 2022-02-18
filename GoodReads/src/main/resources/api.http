@@ -1,0 +1,16 @@
+### editProfile
+PUT localhost:8484/user/edit/profile
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "email": "sanya@gmail.com",
+  "firstName": "Sanya",
+  "gender": "f",
+  "genderViewableBy": "n",
+  "locationViewableBy": "n",
+  "AddressWithoutUserDTO": {
+    "addressId": 1,
+    "townName": "Debren"
+  }
+}

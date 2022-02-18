@@ -34,13 +34,13 @@ public class Book {
     @JoinColumn(name = "language_id")
     private Language language;
 
-    @OneToMany(mappedBy = "books")
+    @OneToMany(mappedBy = "books", fetch = FetchType.LAZY)
     private Set<Rating> ratings;
-    @OneToMany(mappedBy = "books")
+    @OneToMany(mappedBy = "books", fetch = FetchType.LAZY)
     private Set<Review> reviews;
-    @OneToMany(mappedBy = "books")
+    @OneToMany(mappedBy = "books", fetch = FetchType.LAZY)
     private Set<Quote> quotes;
-    @OneToMany(mappedBy = "books")
+    @OneToMany(mappedBy = "books", fetch = FetchType.LAZY)
     private Set<UsersBooks> booksPerUser;
 
     @ManyToMany(cascade={CascadeType.ALL})
@@ -48,7 +48,7 @@ public class Book {
             joinColumns={@JoinColumn(name="book_id")},
             inverseJoinColumns={@JoinColumn(name="edition_id")})
     private Set<Book> editions;
-    @ManyToMany(mappedBy="editions")
+    @ManyToMany(mappedBy="editions", fetch = FetchType.LAZY)
     private Set<Book> bookEditions;
 
     @ManyToMany

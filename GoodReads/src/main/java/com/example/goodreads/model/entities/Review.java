@@ -27,6 +27,6 @@ public class Review {
             joinColumns={@JoinColumn(name="review_id")},
             inverseJoinColumns={@JoinColumn(name="comment_id")})
     private Set<Review> comments;
-    @ManyToMany(mappedBy="comments")
+    @ManyToMany(mappedBy="comments", fetch = FetchType.LAZY)
     private Set<Review> reviews;
 }
