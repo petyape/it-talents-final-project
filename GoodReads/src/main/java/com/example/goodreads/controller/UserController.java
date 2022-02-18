@@ -1,17 +1,16 @@
 package com.example.goodreads.controller;
 
 import com.example.goodreads.exceptions.UnauthorizedException;
+import com.example.goodreads.model.dto.userDTO.RegisterUserDTO;
 import com.example.goodreads.model.dto.userDTO.UserResponseDTO;
 import com.example.goodreads.model.dto.userDTO.UserWithAddressDTO;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -24,8 +23,35 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
     @Autowired
     private ModelMapper mapper;
+
+    @PostMapping("/login")
+    @ResponseBody
+    public UserResponseDTO login(@RequestBody User user, HttpSession session, HttpServletRequest request) {
+        String email = user.getEmail();
+        String pass = user.getPassword();
+        User u = userService.login(email, pass);
+        session.setAttribute(USER_ID, u.getUserId());
+        session.setAttribute(LOGGED_FROM, request.getRemoteAddr());
+        session.setAttribute(LOGGED, true);
+        return mapper.map(u, UserResponseDTO.class);
+    }
+
+
+    @PostMapping("/users")
+    public ResponseEntity<UserResponseDTO> register(@RequestBody RegisterUserDTO user, HttpSession session, HttpServletRequest request) {
+        String email = user.getEmail();
+        String password = user.getPassword();
+        String firstName = user.getFirstName();
+        User u = userService.register(email, password, firstName);
+        session.setAttribute(USER_ID, u.getUserId());
+        session.setAttribute(LOGGED, true);
+        session.setAttribute(LOGGED_FROM, request.getRemoteAddr());
+        UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
+        return ResponseEntity.ok(dto);
+    }
 
     @PutMapping("/user/edit/profile")
     public ResponseEntity<UserResponseDTO> editProfile(@RequestBody UserWithAddressDTO userEdited, HttpSession session, HttpServletRequest request) {
