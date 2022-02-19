@@ -14,10 +14,42 @@ Content-Type: application/json
   "isReverseNameOrder": false,
   "genderViewableBy": "f",
   "locationViewableBy": "f",
+  "dateOfBirth": "2002-11-01",
   "address": {
     "addressId": 2,
     "townName": "Gotse Delchev"
   }
+}
+
+### editPrivacy
+PUT localhost:8484/user/edit/privacy
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "privacy": {
+    "privacyId": 2,
+    "viewProfile": "e",
+    "canNonFriendsFollow": true,
+    "canNonFriendsComment": true,
+    "canDisplayReviews": true,
+    "privateMessages": true,
+    "isEmailVisible": true,
+    "allowSearchByEmail": true,
+    "challengeQuestion": "Hello dear?",
+    "promptToRecommendBooks": true
+  }
+}
+
+### changePassword
+PUT localhost:8484/user/edit/password
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "currentPassword": "Aa@!lkjl123",
+  "newPassword": "Aa@!lkjl1234",
+  "confirmPassword": "Aa@!lkjl1234"
 }
 
 ### login
@@ -59,26 +91,3 @@ Content-Type: application/json
   "firstName" : "Sanya"
 
 }
-
-### get by id
-GET localhost:8484/test_table/1
-Content-Type: application/json
-
-### edit
-PUT localhost:8484/test_table
-Content-Type: application/json
-
-{
-  "id" : 1,
-  "username" : "petyaa",
-  "password" : "123",
-  "confirmPassword" : "123"
-}
-
-
-### delete
-DELETE localhost:8484/test_table/1
-Content-Type: application/json
-
-### logout
-POST localhost:8484/test_table

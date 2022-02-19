@@ -1,6 +1,7 @@
 package com.example.goodreads.controller;
 
 import com.example.goodreads.exceptions.BadRequestException;
+import com.example.goodreads.exceptions.DeniedPermissionException;
 import com.example.goodreads.exceptions.UnauthorizedException;
 import com.example.goodreads.model.dto.ErrorDTO;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorDTO dto = new ErrorDTO();
         dto.setMsg(e.getMessage());
         dto.setStatus(HttpStatus.BAD_REQUEST.value());
+        return dto;
+    }
+
+    @ExceptionHandler(value ={DeniedPermissionException.class})
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    @ResponseBody
+    public ErrorDTO handleDeniedPermission(Exception e){
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMsg(e.getMessage());
+        dto.setStatus(HttpStatus.EXPECTATION_FAILED.value());
         return dto;
     }
 }

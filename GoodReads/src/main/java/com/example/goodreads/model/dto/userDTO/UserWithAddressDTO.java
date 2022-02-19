@@ -25,10 +25,7 @@ public class UserWithAddressDTO {
     private Boolean isReverseNameOrder;
     private char genderViewableBy;
     private char locationViewableBy;
-
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
-
     private String webSite;
     private String interests;
     private String booksPreferences;

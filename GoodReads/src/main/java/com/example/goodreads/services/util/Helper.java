@@ -1,5 +1,6 @@
 package com.example.goodreads.services.util;
 
+import com.example.goodreads.exceptions.BadRequestException;
 import org.apache.commons.validator.routines.EmailValidator;
 
 public class Helper {
@@ -25,8 +26,12 @@ public class Helper {
         return false;
     }
 
-    public static Boolean isValidPassword(String password) {
-        return (password.matches("(?=^.{8,}$)(?=.*\\d)(?=.*[!@#$%^&*]+)(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$"));
+    public static void validatePassword(String password) {
+        if (!password.matches("(?=^.{8,}$)(?=.*\\d)(?=.*[!@#$%^&*]+)(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$")) {
+            throw new BadRequestException("Password must contain at least one lower case letter, " +
+                    "one upper case letter, one number, one special character " +
+                    "and should be at least 8 characters long.");
+        }
     }
 
     public static int charCounter(String text) {
