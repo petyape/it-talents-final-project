@@ -1,10 +1,28 @@
-## login
+### editProfile
+PUT localhost:8484/user/edit/profile
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "email": "sanya@gmail.com",
+  "firstName": "Sanya",
+  "gender": "f",
+  "genderViewableBy": "n",
+  "locationViewableBy": "n",
+  "AddressWithoutUserDTO": {
+    "addressId": 1,
+    "townName": "Debren"
+  }
+}
+
+
+### login
 POST localhost:8484/login
 Content-Type: application/json
 
 {
-  "email" : "petya.peteva2@gmail.com",
-  "pass" : "Aa@!l123"
+"email" : "petya.peteva2@gmail.com",
+"pass" : "Aa@!l123"
 }
 
 ### register
@@ -18,23 +36,7 @@ Content-Type: application/json
 
 }
 
-### get by id
-GET localhost:8484/test_table/1
-Content-Type: application/json
-
-### edit
-PUT localhost:8484/test_table
-Content-Type: application/json
-
-{
-  "id" : 1,
-  "username" : "petyaa",
-  "password" : "123",
-  "confirmPassword" : "123"
-}
-
-
-### gelete
+### delete
 DELETE localhost:8484/test_table/1
 Content-Type: application/json
 

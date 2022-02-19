@@ -11,14 +11,13 @@ import com.example.goodreads.model.repository.AddressRepository;
 import com.example.goodreads.model.repository.PrivacyRepository;
 import com.example.goodreads.model.repository.UserRepository;
 import com.example.goodreads.services.util.Converter;
+import com.example.goodreads.services.util.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
-
-import java.util.regex.Pattern;
 
 import static com.example.goodreads.controller.UserController.USER_ID;
 
@@ -32,30 +31,16 @@ public class UserService {
     private AddressRepository addressRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PrivacyRepository privacyRepository;
 
     @Autowired
-    private PrivacyRepository privacyRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private Converter converter;
 
 
-    @Transactional
-    public User editProfile(UserWithAddressDTO dto, HttpSession session) {
-        int userId = dto.getUserId();
-        if ((Integer) session.getAttribute(USER_ID) != userId) {
-            throw new BadRequestException("Wrong user ID provided!");
-        }
-        User user = userRepository.findById((long) userId).orElseThrow(() -> (new NotFoundException("User not found!")));
-        if (!dto.isValid()) {
-            throw new BadRequestException("Wrong account settings provided!");
-        }
-        converter.mapToExistingUser(dto, user);
-        userRepository.save(user);
-        addressRepository.save(user.getAddress());
-        return user;
-    }
+
 
 
     public User login(String email, String password) {
@@ -65,7 +50,7 @@ public class UserService {
         if (password == null || password.isBlank()) {
             throw new BadRequestException("Password is mandatory!");
         }
-        User u = userRepository.findByEmailAndPassword(email, password);
+        User u = userRepository.findByEmail(email);
         if (u == null) {
             throw new UnauthorizedException("Wrong credentials!");
         }
@@ -75,25 +60,22 @@ public class UserService {
         return u;
     }
 
-
+    @Transactional
     public User register(String email, String password, String firstName) {
-        String regexPattern = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
 
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Email address is mandatory!");
         }
-        if (!Pattern.compile(regexPattern).matcher(email).matches()) {
+        if (!Helper.isValidEmail(email)) {
             System.out.println("Invalid email address!");
         }
         if (password == null || password.isBlank()) {
             throw new BadRequestException("Password is mandatory!");
         }
-        if (!password.matches("(?=^.{8,}$)(?=.*\\d)(?=.*[!@#$%^&*]+)(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$")) {
-            throw new BadRequestException("The password must have at least one lower case letter, " +
-                    "at least one upper case letter, " +
-                    "at least one number, " +
-                    "at least one special char " +
-                    "and the length should be at least with 8 characters.");
+        if (!Helper.isValidPassword(password)) {
+            throw new BadRequestException("Password must contain at least one lower case letter, " +
+                    "one upper case letter, one number, one special character " +
+                    "and should be at least 8 characters long.");
         }
         if (userRepository.findByEmail(email) != null) {
             throw new BadRequestException("User with this email already exists!");
@@ -121,10 +103,29 @@ public class UserService {
                 .password(passwordEncoder.encode(password))
                 .showLastName(true)
                 .isReverseNameOrder(false)
+                .gender(User.Visibility.NONE.symbol)
                 .genderViewableBy(User.Visibility.NONE.symbol)
                 .locationViewableBy(User.Visibility.NONE.symbol)
                 .address(address)
                 .privacy(pr).build();
         return userRepository.save(user);
     }
+
+    @Transactional
+    public User editProfile(UserWithAddressDTO dto, HttpSession session) {
+        int userId = dto.getUserId();
+        if ((Integer)session.getAttribute(USER_ID) != userId) {
+            throw new BadRequestException("Wrong user ID provided!");
+        }
+        User user = userRepository.findById( userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        if (!dto.isValid()) {
+            throw new BadRequestException("Wrong account settings provided!");
+        }
+        converter.mapToExistingUser(dto, user);
+        userRepository.save(user);
+        addressRepository.save(user.getAddress());
+        return user;
+    }
+
+
 }
