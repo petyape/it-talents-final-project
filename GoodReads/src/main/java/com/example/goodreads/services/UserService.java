@@ -11,13 +11,14 @@ import com.example.goodreads.model.repository.AddressRepository;
 import com.example.goodreads.model.repository.PrivacyRepository;
 import com.example.goodreads.model.repository.UserRepository;
 import com.example.goodreads.services.util.Converter;
-import com.example.goodreads.services.util.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
+
+import java.util.regex.Pattern;
 
 import static com.example.goodreads.controller.UserController.USER_ID;
 
@@ -31,16 +32,29 @@ public class UserService {
     private AddressRepository addressRepository;
 
     @Autowired
-    private PrivacyRepository privacyRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PrivacyRepository privacyRepository;
 
     @Autowired
     private Converter converter;
 
-
-
+    @Transactional
+    public User editProfile(UserWithAddressDTO dto, HttpSession session) {
+        long userId = dto.getUserId();
+        if ((long) session.getAttribute(USER_ID) != userId) {
+            throw new BadRequestException("Wrong user ID provided!");
+        }
+        if (!dto.isValid()) {
+            throw new BadRequestException("Wrong account settings provided!");
+        }
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        converter.mapToUser(dto, user);
+        userRepository.save(user);
+        addressRepository.save(user.getAddress());
+        return user;
+    }
 
 
     public User login(String email, String password) {
@@ -62,6 +76,7 @@ public class UserService {
 
     @Transactional
     public User register(String email, String password, String firstName) {
+        String regexPattern = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
 
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Email address is mandatory!");

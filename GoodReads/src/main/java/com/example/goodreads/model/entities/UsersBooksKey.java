@@ -10,8 +10,8 @@ import java.io.Serializable;
 public class UsersBooksKey implements Serializable {
 
     @Column
-    int userId;
+    long userId;
 
     @Column
-    int bookId;
+    long bookId;
 }

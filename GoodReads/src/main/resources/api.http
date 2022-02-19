@@ -15,14 +15,22 @@ Content-Type: application/json
   }
 }
 
+### login
+POST localhost:8484/login
+Content-Type: application/json
+
+{
+  "email" : "petya.peteva2@gmail.com",
+  "password" : "Aa@!l123"
+}
 
 ### login
 POST localhost:8484/login
 Content-Type: application/json
 
 {
-"email" : "petya.peteva2@gmail.com",
-"pass" : "Aa@!l123"
+  "email" : "s.g.sevdeva@gmail.com",
+  "password" : "Aa@!l123"
 }
 
 ### register
@@ -35,6 +43,33 @@ Content-Type: application/json
   "firstName" : "Petya"
 
 }
+
+### register
+POST localhost:8484/users
+Content-Type: application/json
+
+{
+  "email" : "s.g.sevdeva@gmail.com",
+  "password" : "sanyAsevdev@22",
+  "firstName" : "Sanya"
+
+}
+
+### get by id
+GET localhost:8484/test_table/1
+Content-Type: application/json
+
+### edit
+PUT localhost:8484/test_table
+Content-Type: application/json
+
+{
+  "id" : 1,
+  "username" : "petyaa",
+  "password" : "123",
+  "confirmPassword" : "123"
+}
+
 
 ### delete
 DELETE localhost:8484/test_table/1

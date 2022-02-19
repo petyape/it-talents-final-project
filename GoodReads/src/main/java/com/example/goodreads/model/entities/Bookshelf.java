@@ -9,7 +9,7 @@ public class Bookshelf {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int bookshelfId;
+    private long bookshelfId;
 
     @Column
     private String name;

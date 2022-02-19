@@ -10,7 +10,7 @@ public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int messageId;
+    private long messageId;
 
     @Column
     private LocalDate sentAt;

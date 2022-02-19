@@ -9,7 +9,7 @@ public class Quote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int quoteId;
+    private long quoteId;
 
     @Column
     private String quote;

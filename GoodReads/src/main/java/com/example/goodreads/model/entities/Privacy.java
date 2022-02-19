@@ -29,7 +29,7 @@ public class Privacy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int privacyId;
+    private long privacyId;
 
     @Column
     private char viewProfile;

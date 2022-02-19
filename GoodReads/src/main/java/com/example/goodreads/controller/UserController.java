@@ -74,6 +74,7 @@ public class UserController {
 
 //    @PutMapping("/user/change_password")
 //    @PutMapping("user/edit/privacy")
+//    @PostMapping("/user/upload_photo")
 //    @DeleteMapping("user/destroy")
 
 }
