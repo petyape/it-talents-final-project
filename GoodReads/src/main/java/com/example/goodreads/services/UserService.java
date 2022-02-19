@@ -11,14 +11,14 @@ import com.example.goodreads.model.repository.AddressRepository;
 import com.example.goodreads.model.repository.PrivacyRepository;
 import com.example.goodreads.model.repository.UserRepository;
 import com.example.goodreads.services.util.Converter;
+import com.example.goodreads.services.util.Helper;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
-
-import java.util.regex.Pattern;
+import java.sql.SQLException;
 
 import static com.example.goodreads.controller.UserController.USER_ID;
 
@@ -40,23 +40,6 @@ public class UserService {
     @Autowired
     private Converter converter;
 
-    @Transactional
-    public User editProfile(UserWithAddressDTO dto, HttpSession session) {
-        long userId = dto.getUserId();
-        if ((long) session.getAttribute(USER_ID) != userId) {
-            throw new BadRequestException("Wrong user ID provided!");
-        }
-        if (!dto.isValid()) {
-            throw new BadRequestException("Wrong account settings provided!");
-        }
-        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
-        converter.mapToUser(dto, user);
-        userRepository.save(user);
-        addressRepository.save(user.getAddress());
-        return user;
-    }
-
-
     public User login(String email, String password) {
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Email is mandatory!");
@@ -76,8 +59,6 @@ public class UserService {
 
     @Transactional
     public User register(String email, String password, String firstName) {
-        String regexPattern = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
-
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Email address is mandatory!");
         }
@@ -105,7 +86,7 @@ public class UserService {
                 .isEmailVisible(true)
                 .privateMessages(true)
                 .promptToRecommendBooks(true)
-                .viewProfile(Privacy.Visibility.FRIENDS.symbol)
+                .viewProfile(Helper.Visibility.FRIENDS.symbol)
                 .build();
         pr = privacyRepository.save(pr);
 
@@ -118,25 +99,29 @@ public class UserService {
                 .password(passwordEncoder.encode(password))
                 .showLastName(true)
                 .isReverseNameOrder(false)
-                .gender(User.Visibility.NONE.symbol)
-                .genderViewableBy(User.Visibility.NONE.symbol)
-                .locationViewableBy(User.Visibility.NONE.symbol)
+                .gender(Helper.Visibility.NONE.symbol)
+                .genderViewableBy(Helper.Visibility.NONE.symbol)
+                .locationViewableBy(Helper.Visibility.NONE.symbol)
                 .address(address)
                 .privacy(pr).build();
         return userRepository.save(user);
     }
 
+//    @Transactional(rollbackOn = SQLException.class)
     @Transactional
     public User editProfile(UserWithAddressDTO dto, HttpSession session) {
-        int userId = dto.getUserId();
-        if ((Integer)session.getAttribute(USER_ID) != userId) {
+        if (dto == null) {
+            throw new NullPointerException("No user provided!");
+        }
+        long userId = dto.getUserId();
+        if ((Long) session.getAttribute(USER_ID) != userId) {
             throw new BadRequestException("Wrong user ID provided!");
         }
         User user = userRepository.findById( userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         if (!dto.isValid()) {
             throw new BadRequestException("Wrong account settings provided!");
         }
-        converter.mapToExistingUser(dto, user);
+        converter.mapToUser(dto, user);
         userRepository.save(user);
         addressRepository.save(user.getAddress());
         return user;

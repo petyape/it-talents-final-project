@@ -3,6 +3,19 @@ package com.example.goodreads.services.util;
 import org.apache.commons.validator.routines.EmailValidator;
 
 public class Helper {
+    public enum Visibility{EVERYONE('e'), FRIENDS('f'), NONE('n');
+
+        public final char symbol;
+        Visibility(char symbol){
+            this.symbol = symbol;
+        }
+
+        public static boolean isValidVisibility(char symbol) {
+            return (symbol == NONE.symbol ||
+                    symbol == EVERYONE.symbol ||
+                    symbol == FRIENDS.symbol);
+        }
+    }
 
     public static Boolean isValidEmail(String email) {
         if (charCounter(email) == 1) {

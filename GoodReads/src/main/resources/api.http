@@ -3,15 +3,20 @@ PUT localhost:8484/user/edit/profile
 Content-Type: application/json
 
 {
-  "userId": 1,
-  "email": "sanya@gmail.com",
+  "userId": 2,
+  "email": "s.g.sevdeva@gmail.com",
   "firstName": "Sanya",
+  "middleName": "G.",
+  "lastName": "Sevdeva",
   "gender": "f",
-  "genderViewableBy": "n",
-  "locationViewableBy": "n",
-  "AddressWithoutUserDTO": {
-    "addressId": 1,
-    "townName": "Debren"
+  "username": "ssevdeva",
+  "showLastName": false,
+  "isReverseNameOrder": false,
+  "genderViewableBy": "f",
+  "locationViewableBy": "f",
+  "address": {
+    "addressId": 2,
+    "townName": "Gotse Delchev"
   }
 }
 
@@ -20,8 +25,8 @@ POST localhost:8484/login
 Content-Type: application/json
 
 {
-  "email" : "petya.peteva2@gmail.com",
-  "password" : "Aa@!l123"
+  "email" : "petygm@gmail.com",
+  "password" : "Aa@!lkjl123"
 }
 
 ### login
@@ -30,7 +35,7 @@ Content-Type: application/json
 
 {
   "email" : "s.g.sevdeva@gmail.com",
-  "password" : "Aa@!l123"
+  "password" : "sanyAsevdev@22"
 }
 
 ### register

@@ -25,6 +25,9 @@ public class Address {
     private int regionCode;
 
     @Column
+    private String zipCode;
+
+    @Column
     private String countryName;
 
 

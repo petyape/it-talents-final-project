@@ -31,20 +31,6 @@ public class User {
         }
     }
 
-    public enum Visibility{EVERYONE('e'), FRIENDS('f'), NONE('n');
-
-        public final char symbol;
-        Visibility(char symbol){
-            this.symbol = symbol;
-        }
-
-        public static boolean isValidVisibility(char symbol) {
-            return (symbol == NONE.symbol ||
-                    symbol == EVERYONE.symbol ||
-                    symbol == FRIENDS.symbol);
-        }
-    }
-
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

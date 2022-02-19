@@ -3,6 +3,7 @@ package com.example.goodreads.model.dto.userDTO;
 import com.example.goodreads.model.entities.Address;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.services.util.Helper;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,7 +25,10 @@ public class UserWithAddressDTO {
     private Boolean isReverseNameOrder;
     private char genderViewableBy;
     private char locationViewableBy;
+
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
+
     private String webSite;
     private String interests;
     private String booksPreferences;
@@ -33,7 +37,7 @@ public class UserWithAddressDTO {
 
     public boolean isValid() {
         return (Helper.isValidEmail(email) && !firstName.isBlank() && User.Gender.isValidGender(gender) &&
-                User.Visibility.isValidVisibility(genderViewableBy) &&
-                User.Visibility.isValidVisibility(locationViewableBy) && address != null);
+                Helper.Visibility.isValidVisibility(genderViewableBy) &&
+                Helper.Visibility.isValidVisibility(locationViewableBy) && address != null);
     }
 }

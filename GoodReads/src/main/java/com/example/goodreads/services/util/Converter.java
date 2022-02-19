@@ -1,9 +1,7 @@
 package com.example.goodreads.services.util;
 
 import com.example.goodreads.exceptions.BadRequestException;
-import com.example.goodreads.model.dto.userDTO.UserResponseDTO;
 import com.example.goodreads.model.dto.userDTO.UserWithAddressDTO;
-import com.example.goodreads.model.entities.Address;
 import com.example.goodreads.model.entities.Privacy;
 import com.example.goodreads.model.entities.User;
 import org.modelmapper.ModelMapper;
