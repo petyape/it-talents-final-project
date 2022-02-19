@@ -13,7 +13,7 @@ public class Converter {
     @Autowired
     private ModelMapper mapper;
 
-    public void mapToUser(UserWithAddressDTO dto, User user) {
+    public User mapToUser(UserWithAddressDTO dto, User user) {
         if (dto == null || user == null) {
             throw new NullPointerException("Empty parameters!");
         }
@@ -30,5 +30,7 @@ public class Converter {
         user.setPhotoUrl(photoUrl);
         user.setPassword(password);
         user.setPrivacy(privacy);
+
+        return user;
     }
 }

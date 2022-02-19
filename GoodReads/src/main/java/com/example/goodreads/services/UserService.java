@@ -121,9 +121,9 @@ public class UserService {
         if (!dto.isValid()) {
             throw new BadRequestException("Wrong account settings provided!");
         }
-        converter.mapToUser(dto, user);
-        userRepository.save(user);
+        user = converter.mapToUser(dto, user);
         addressRepository.save(user.getAddress());
+        userRepository.save(user);
         return user;
     }
 
