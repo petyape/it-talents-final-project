@@ -11,6 +11,7 @@ import com.example.goodreads.model.repository.AddressRepository;
 import com.example.goodreads.model.repository.PrivacyRepository;
 import com.example.goodreads.model.repository.UserRepository;
 import com.example.goodreads.services.util.Converter;
+import com.example.goodreads.services.util.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,12 +28,16 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private AddressRepository addressRepository;
+
     @Autowired
     private PrivacyRepository privacyRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private Converter converter;
 
@@ -53,21 +58,19 @@ public class UserService {
         return u;
     }
 
-
     @Transactional
     public User register(String email, String password, String firstName) {
-        String regexPattern = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
 
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Email address is mandatory!");
         }
-        if (!Pattern.compile(regexPattern).matcher(email).matches()) {
+        if (!Helper.isValidEmail(email)) {
             System.out.println("Invalid email address!");
         }
         if (password == null || password.isBlank()) {
             throw new BadRequestException("Password is mandatory!");
         }
-        if (!password.matches("(?=^.{8,}$)(?=.*\\d)(?=.*[!@#$%^&*]+)(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$")) {
+        if (!Helper.isValidPassword(password)) {
             throw new BadRequestException("Password must contain at least one lower case letter, " +
                     "one upper case letter, one number, one special character " +
                     "and should be at least 8 characters long.");
@@ -98,7 +101,7 @@ public class UserService {
                 .password(passwordEncoder.encode(password))
                 .showLastName(true)
                 .isReverseNameOrder(false)
-                .gender('n')
+                .gender(User.Visibility.NONE.symbol)
                 .genderViewableBy(User.Visibility.NONE.symbol)
                 .locationViewableBy(User.Visibility.NONE.symbol)
                 .address(address)
@@ -109,10 +112,10 @@ public class UserService {
     @Transactional
     public User editProfile(UserWithAddressDTO dto, HttpSession session) {
         int userId = dto.getUserId();
-        if ((Integer) session.getAttribute(USER_ID) != userId) {
+        if ((Integer)session.getAttribute(USER_ID) != userId) {
             throw new BadRequestException("Wrong user ID provided!");
         }
-        User user = userRepository.findById((long) userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        User user = userRepository.findById( userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         if (!dto.isValid()) {
             throw new BadRequestException("Wrong account settings provided!");
         }
