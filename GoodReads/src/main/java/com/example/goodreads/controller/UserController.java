@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -60,6 +61,28 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
+    @PutMapping("/user/edit/privacy")
+    public ResponseEntity<UserResponseDTO> editPrivacy(@RequestBody UserWithPrivacyDTO userEdited, HttpSession session, HttpServletRequest request) {
+        validateLogin(session, request);
+        User u = userService.editPrivacy(userEdited, session);
+        UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("/user/edit/password")
+    public ResponseEntity<UserResponseDTO> changePassword(@RequestBody ChangePasswordDTO newPasswordUser, HttpSession session, HttpServletRequest request) {
+        validateLogin(session, request);
+        User u = userService.changePassword(newPasswordUser, session);
+        UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping("/user/edit/photo")
+    public String uploadPhoto(@RequestParam(name = "file") MultipartFile file, HttpSession session, HttpServletRequest request) {
+        validateLogin(session, request);
+        return userService.uploadFile(file, request);
+    }
+
     // TODO: extract in a base class
     public static void validateLogin(HttpSession session, HttpServletRequest request) {
         boolean newSession = session.isNew();
@@ -79,10 +102,6 @@ public class UserController {
         }
         session.invalidate();
     }
-
-
-//    @PutMapping("/user/change_password")
-//    @PutMapping("user/edit/privacy")
 //    @DeleteMapping("user/destroy")
 
 }

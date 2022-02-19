@@ -8,7 +8,7 @@ public class Rating {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int ratingId;
+    private long ratingId;
 
     @Column
     private int rating;

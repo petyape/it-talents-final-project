@@ -16,13 +16,16 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "adress_id")
-    private int addressId;
+    private long addressId;
 
     @Column
     private String townName;
 
     @Column
     private int regionCode;
+
+    @Column
+    private String zipCode;
 
     @Column
     private String countryName;

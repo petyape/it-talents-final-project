@@ -1,10 +1,62 @@
-## login
+### editProfile
+PUT localhost:8484/user/edit/profile
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "email": "s.g.sevdeva@gmail.com",
+  "firstName": "Sanya",
+  "middleName": "G.",
+  "lastName": "Sevdeva",
+  "gender": "f",
+  "username": "ssevdeva",
+  "showLastName": false,
+  "isReverseNameOrder": false,
+  "genderViewableBy": "f",
+  "locationViewableBy": "f",
+  "dateOfBirth": "2002-11-01",
+  "address": {
+    "addressId": 2,
+    "townName": "Gotse Delchev"
+  }
+}
+
+### editPrivacy
+PUT localhost:8484/user/edit/privacy
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "privacy": {
+    "privacyId": 2,
+    "viewProfile": "e",
+    "canNonFriendsFollow": true,
+    "canNonFriendsComment": true,
+    "canDisplayReviews": true,
+    "privateMessages": true,
+    "isEmailVisible": true,
+    "allowSearchByEmail": true,
+    "challengeQuestion": "Hello dear?",
+    "promptToRecommendBooks": true
+  }
+}
+
+### login
 POST localhost:8484/login
 Content-Type: application/json
 
 {
   "email" : "petygm@gmail.com",
   "password" : "Aa@!lkjl123"
+}
+
+### login
+POST localhost:8484/login
+Content-Type: application/json
+
+{
+  "email" : "s.g.sevdeva@gmail.com",
+  "password" : "sanyAsevdev@22"
 }
 
 ### register
@@ -18,38 +70,16 @@ Content-Type: application/json
 
 }
 
-### editProfile
-PUT localhost:8484/user/edit/profile
+### register
+POST localhost:8484/users
 Content-Type: application/json
 
 {
-  "userId": 1,
-  "email": "sanya@gmail.com",
-  "firstName": "Sanya",
-  "gender": "f",
-  "genderViewableBy": "n",
-  "locationViewableBy": "n",
-  "AddressWithoutUserDTO": {
-    "addressId": 1,
-    "townName": "Debren"
-  }
+  "email" : "s.g.sevdeva@gmail.com",
+  "password" : "sanyAsevdev@22",
+  "firstName" : "Sanya"
+
 }
-
-### get by id
-GET localhost:8484/test_table/1
-Content-Type: application/json
-
-### edit
-PUT localhost:8484/test_table
-Content-Type: application/json
-
-{
-  "id" : 1,
-  "username" : "petyaa",
-  "password" : "123",
-  "confirmPassword" : "123"
-}
-
 
 ### delete
 DELETE localhost:8484/test_table/1
