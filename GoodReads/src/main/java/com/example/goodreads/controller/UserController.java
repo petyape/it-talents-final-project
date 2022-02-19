@@ -75,6 +75,12 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
+    @PostMapping("/user/edit/photo")
+    public String uploadPhoto(@RequestParam(name = "file") MultipartFile file, HttpSession session, HttpServletRequest request) {
+        validateLogin(session, request);
+        return userService.uploadFile(file, request);
+    }
+
     // TODO: extract in a base class
     public static void validateLogin(HttpSession session, HttpServletRequest request) {
         boolean newSession = session.isNew();

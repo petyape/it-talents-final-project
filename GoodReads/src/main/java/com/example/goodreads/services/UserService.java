@@ -178,4 +178,16 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         return userRepository.save(user);
     }
+
+    @SneakyThrows
+    public String uploadFile(MultipartFile file, HttpServletRequest request) {
+        long loggedUser = (long) request.getSession().getAttribute(USER_ID);
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        String photoName = System.nanoTime() + "." + extension;
+        Files.copy(file.getInputStream(), new File("uploads" + File.separator + photoName).toPath());
+        User user = userRepository.findById(loggedUser).orElseThrow(() -> (new NotFoundException("User not found!")));
+        user.setPhotoUrl(photoName);
+        userRepository.save(user);
+        return photoName;
+    }
 }
