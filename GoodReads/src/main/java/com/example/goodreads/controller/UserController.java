@@ -1,11 +1,13 @@
 package com.example.goodreads.controller;
 
+import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.UnauthorizedException;
 import com.example.goodreads.model.dto.userDTO.*;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -90,5 +92,16 @@ public class UserController {
             throw new UnauthorizedException("Please, login!");
         }
     }
+
+    @PutMapping("/user/sign_out")
+    public static void logout(@RequestBody LogoutUserDTO user, HttpSession session, HttpServletRequest request){
+        Integer sessionUserId = (Integer) session.getAttribute(USER_ID);
+        Integer userId = user.getUserId();
+        if(!sessionUserId.equals(userId)){
+            throw new BadRequestException("Error! Session ended!");
+        }
+        session.invalidate();
+    }
+//    @DeleteMapping("user/destroy")
 
 }

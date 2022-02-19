@@ -41,17 +41,6 @@ Content-Type: application/json
   }
 }
 
-### changePassword
-PUT localhost:8484/user/edit/password
-Content-Type: application/json
-
-{
-  "userId": 1,
-  "currentPassword": "Aa@!lkjl123",
-  "newPassword": "Aa@!lkjl1234",
-  "confirmPassword": "Aa@!lkjl1234"
-}
-
 ### login
 POST localhost:8484/login
 Content-Type: application/json
@@ -91,3 +80,10 @@ Content-Type: application/json
   "firstName" : "Sanya"
 
 }
+
+### delete
+DELETE localhost:8484/test_table/1
+Content-Type: application/json
+
+### logout
+POST localhost:8484/test_table

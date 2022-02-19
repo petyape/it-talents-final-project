@@ -13,6 +13,7 @@ import com.example.goodreads.model.entities.User;
 import com.example.goodreads.model.repository.AddressRepository;
 import com.example.goodreads.model.repository.PrivacyRepository;
 import com.example.goodreads.model.repository.UserRepository;
+import com.example.goodreads.services.util.Converter;
 import com.example.goodreads.services.util.Helper;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
@@ -23,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
-
 import java.io.File;
 import java.nio.file.Files;
 
@@ -37,9 +37,9 @@ public class UserService {
     @Autowired
     private AddressRepository addressRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private PrivacyRepository privacyRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User login(String email, String password) {
         if (email == null || email.isBlank()) {
@@ -60,11 +60,12 @@ public class UserService {
 
     @Transactional
     public User register(String email, String password, String firstName) {
+
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Email address is mandatory!");
         }
         if (!Helper.isValidEmail(email)) {
-            System.out.println("Invalid email address!");
+            throw new BadRequestException("Invalid email address!");
         }
         if (password == null || password.isBlank()) {
             throw new BadRequestException("Password is mandatory!");
@@ -73,22 +74,12 @@ public class UserService {
         if (userRepository.findByEmail(email) != null) {
             throw new BadRequestException("User with this email already exists!");
         }
+        if (userRepository.findByEmail(email) != null) {
+            throw new BadRequestException("User with this email already exists!");
+        }
+        Privacy pr = privacyService.createDefaultPrivacy();
 
-        Privacy pr = Privacy.builder()
-                .canDisplayReviews(true)
-                .allowSearchByEmail(true)
-                .canNonFriendsComment(true)
-                .canNonFriendsFollow(true)
-                .challengeQuestion("")
-                .isEmailVisible(true)
-                .privateMessages(true)
-                .promptToRecommendBooks(true)
-                .viewProfile(Helper.Visibility.FRIENDS.symbol)
-                .build();
-        pr = privacyRepository.save(pr);
-
-        Address address = Address.builder().build();
-        address = addressRepository.save(address);
+        Address address = addressService.createDefaultAddress();
 
         User user = User.builder()
                 .firstName(firstName)
