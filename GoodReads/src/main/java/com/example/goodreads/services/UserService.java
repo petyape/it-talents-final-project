@@ -8,7 +8,6 @@ import com.example.goodreads.model.entities.Address;
 import com.example.goodreads.model.entities.Privacy;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.model.repository.AddressRepository;
-import com.example.goodreads.model.repository.PrivacyRepository;
 import com.example.goodreads.model.repository.UserRepository;
 import com.example.goodreads.services.util.Converter;
 import com.example.goodreads.services.util.Helper;
@@ -28,20 +27,19 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private AddressRepository addressRepository;
+    private AddressService addressService;
 
     @Autowired
-    private PrivacyRepository privacyRepository;
+    private PrivacyService privacyService;
+
+    @Autowired
+    private AddressRepository addressRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     private Converter converter;
-
-
-
-
 
     public User login(String email, String password) {
         if (email == null || email.isBlank()) {
@@ -67,7 +65,7 @@ public class UserService {
             throw new BadRequestException("Email address is mandatory!");
         }
         if (!Helper.isValidEmail(email)) {
-            System.out.println("Invalid email address!");
+            throw new BadRequestException("Invalid email address!");
         }
         if (password == null || password.isBlank()) {
             throw new BadRequestException("Password is mandatory!");
@@ -81,21 +79,9 @@ public class UserService {
             throw new BadRequestException("User with this email already exists!");
         }
 
-        Privacy pr = Privacy.builder()
-                .canDisplayReviews(true)
-                .allowSearchByEmail(true)
-                .canNonFriendsComment(true)
-                .canNonFriendsFollow(true)
-                .challengeQuestion("")
-                .isEmailVisible(true)
-                .privateMessages(true)
-                .promptToRecommendBooks(true)
-                .viewProfile(Privacy.Visibility.FRIENDS.symbol)
-                .build();
-        pr = privacyRepository.save(pr);
+        Privacy pr = privacyService.createDefaultPrivacy();
 
-        Address address = Address.builder().build();
-        address = addressRepository.save(address);
+        Address address = addressService.createDefaultAddress();
 
         User user = User.builder()
                 .firstName(firstName)
@@ -117,7 +103,7 @@ public class UserService {
         if ((Integer)session.getAttribute(USER_ID) != userId) {
             throw new BadRequestException("Wrong user ID provided!");
         }
-        User user = userRepository.findById( userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        User user = userRepository.findById((long)userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         if (!dto.isValid()) {
             throw new BadRequestException("Wrong account settings provided!");
         }
@@ -126,6 +112,4 @@ public class UserService {
         addressRepository.save(user.getAddress());
         return user;
     }
-
-
 }
