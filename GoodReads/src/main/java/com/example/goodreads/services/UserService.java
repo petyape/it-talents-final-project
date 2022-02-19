@@ -35,7 +35,6 @@ public class UserService {
     @Autowired
     private AddressRepository addressRepository;
 
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
