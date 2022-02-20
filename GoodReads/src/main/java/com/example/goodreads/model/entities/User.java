@@ -37,6 +37,9 @@ public class User {
     private long userId;
 
     @Column
+    private Boolean isAdmin;
+
+    @Column
     private String email;
 
     @Column

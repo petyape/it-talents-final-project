@@ -18,7 +18,6 @@ import javax.servlet.http.HttpSession;
 public class UserController extends BaseController {
     @Autowired
     private UserService userService;
-
     @Autowired
     private ModelMapper mapper;
 
