@@ -35,12 +35,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value ={DeniedPermissionException.class})
-    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ResponseBody
     public ErrorDTO handleDeniedPermission(Exception e){
         ErrorDTO dto = new ErrorDTO();
         dto.setMsg(e.getMessage());
-        dto.setStatus(HttpStatus.EXPECTATION_FAILED.value());
+        dto.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
         return dto;
     }
 }

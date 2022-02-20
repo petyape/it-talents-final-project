@@ -1,10 +1,13 @@
 package com.example.goodreads.model.entities;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(name = "authors")
+@Data
 public class Author {
 
     @Id

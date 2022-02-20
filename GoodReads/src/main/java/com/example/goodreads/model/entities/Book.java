@@ -1,11 +1,18 @@
 package com.example.goodreads.model.entities;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Table(name = "books")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +27,7 @@ public class Book {
     @Column
     private int pages;
 
-    @Column
+    @Column(name = "ISBN")
     private String ISBN;
 
     @Column

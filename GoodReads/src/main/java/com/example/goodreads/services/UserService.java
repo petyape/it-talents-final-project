@@ -33,19 +33,14 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private AddressRepository addressRepository;
-
     @Autowired
     private PrivacyRepository privacyRepository;
-
     @Autowired
     private PrivacyService privacyService;
-
     @Autowired
     private AddressService addressService;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -183,10 +178,11 @@ public class UserService {
         long loggedUser = (long) request.getSession().getAttribute(USER_ID);
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         String photoName = System.nanoTime() + "." + extension;
-        Files.copy(file.getInputStream(), new File("uploads" + File.separator + photoName).toPath());
+        Files.copy(file.getInputStream(), new File("profile_photos" + File.separator + photoName).toPath());
         User user = userRepository.findById(loggedUser).orElseThrow(() -> (new NotFoundException("User not found!")));
         user.setPhotoUrl(photoName);
         userRepository.save(user);
         return photoName;
     }
+
 }

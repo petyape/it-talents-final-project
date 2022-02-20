@@ -83,6 +83,4 @@ public class UserController extends BaseController {
         session.invalidate();
         return ResponseEntity.status(200).build();
     }
-//    @DeleteMapping("user/destroy")
-
 }
