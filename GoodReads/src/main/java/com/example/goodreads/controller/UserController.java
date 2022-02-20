@@ -15,11 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
-public class UserController {
-    public static final String LOGGED = "logged";
-    public static final String LOGGED_FROM = "logged_from";
-    public static final String USER_ID = "user_id";
-
+public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
@@ -82,18 +78,8 @@ public class UserController {
         return userService.uploadFile(file, request);
     }
 
-    // TODO: extract in a base class
-    public static void validateSession(HttpSession session, HttpServletRequest request) {
-        boolean newSession = session.isNew();
-        boolean logged = session.getAttribute(LOGGED) != null && ((Boolean)session.getAttribute(LOGGED));
-        boolean sameIP = request.getRemoteAddr().equals(session.getAttribute(LOGGED_FROM));
-        if (newSession || !logged || !sameIP) {
-            throw new UnauthorizedException("Invalid session! Please, login!");
-        }
-    }
-
     @PutMapping("/user/sign_out")
-    public ResponseEntity<UserResponseDTO>  logout(@RequestBody LogoutUserDTO user, HttpSession session, HttpServletRequest request){
+    public ResponseEntity<UserResponseDTO>  logout(HttpSession session, HttpServletRequest request){
         validateSession(session, request);
         session.invalidate();
         return ResponseEntity.status(200).build();
