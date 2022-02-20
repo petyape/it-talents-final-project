@@ -6,7 +6,6 @@ import com.example.goodreads.model.entities.User;
 import com.example.goodreads.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -83,6 +82,12 @@ public class UserController extends BaseController {
         session.invalidate();
         return ResponseEntity.status(200).build();
     }
-//    @DeleteMapping("user/destroy")
+
+    @DeleteMapping("/user/destroy")
+    public ResponseEntity<String>  deleteAccount(HttpSession session, HttpServletRequest request){
+        validateSession(session, request);
+        String msg = userService.deleteUser(session);
+        return ResponseEntity.ok(msg);
+    }
 
 }

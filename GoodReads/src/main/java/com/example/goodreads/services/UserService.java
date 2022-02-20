@@ -160,7 +160,7 @@ public class UserService {
     }
 
     public User changePassword(ChangePasswordDTO dto, HttpSession session) {
-        if (dto == null) {
+        if (dto == null){
             throw new NullPointerException("No user provided!");
         }
         long userId = dto.getUserId();
@@ -190,4 +190,20 @@ public class UserService {
         userRepository.save(user);
         return photoName;
     }
+
+    @Transactional
+    public String deleteUser(HttpSession session){
+        long userId = (long) session.getAttribute(USER_ID);
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        userRepository.deleteById(user.getUserId());
+        addressRepository.deleteById(user.getAddress().getAddressId());
+        privacyRepository.deleteById(user.getPrivacy().getPrivacyId());
+        return "Successfully deleted user with id " + user.getUserId() + ".";
+        //TODO delete: READING CHALLENGE ENITY
+        //TODO delete in rest of the tables
+    }
+
 }
+
+
+

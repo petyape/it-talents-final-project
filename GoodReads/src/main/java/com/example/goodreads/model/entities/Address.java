@@ -3,6 +3,7 @@ package com.example.goodreads.model.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "address")
@@ -29,6 +30,5 @@ public class Address {
 
     @Column
     private String countryName;
-
 
 }

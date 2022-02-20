@@ -50,6 +50,14 @@ Content-Type: application/json
   "password" : "Aa@!lkjl123"
 }
 
+### delete
+DELETE localhost:8484/user/destroy
+Content-Type: application/json
+
+{
+  "userId" : 37
+}
+
 ### login
 POST localhost:8484/login
 Content-Type: application/json
@@ -64,7 +72,7 @@ POST localhost:8484/users
 Content-Type: application/json
 
 {
-  "email" : "petygm@gmail.com",
+  "email" : "testeDelete@gmail.com",
   "password" : "Aa@!lkjl123",
   "firstName" : "Petya"
 
@@ -81,9 +89,52 @@ Content-Type: application/json
 
 }
 
-### delete
-DELETE localhost:8484/test_table/1
-Content-Type: application/json
+
+
 
 ### logout
 POST localhost:8484/test_table
+
+  "email" : "logouttest@gmail.com",
+  "firstName" : "logout"
+
+}
+### delete
+DELETE localhost:8484/user/destroy
+Content-Type: application/json
+
+{
+  "userId" : 36
+}
+
+### editProfile
+PUT localhost:8484/user/edit/profile
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "email": "sanya@gmail.com",
+  "firstName": "Sanya",
+  "gender": "f",
+  "genderViewableBy": "n",
+  "locationViewableBy": "n",
+  "AddressWithoutUserDTO": {
+    "addressId": 1,
+    "townName": "Debren"
+  }
+}
+
+### logout
+PUT localhost:8484/user/sign_out
+Content-Type: application/json
+
+{
+"userId" : 9
+}
+
+### get by id
+GET localhost:8484/test_table/1
+Content-Type: application/json
+
+### edit
+PUT localhost:8484/test_table
