@@ -2,6 +2,7 @@ package com.example.goodreads.services;
 
 import com.example.goodreads.model.entities.Privacy;
 import com.example.goodreads.model.repository.PrivacyRepository;
+import com.example.goodreads.services.util.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class PrivacyService {
                 .isEmailVisible(true)
                 .privateMessages(true)
                 .promptToRecommendBooks(true)
-                .viewProfile(Privacy.Visibility.FRIENDS.symbol)
+                .viewProfile(Helper.Visibility.FRIENDS.symbol)
                 .build();
         return privacyRepository.save(pr);
     }

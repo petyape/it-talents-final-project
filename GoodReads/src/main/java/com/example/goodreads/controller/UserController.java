@@ -1,6 +1,5 @@
 package com.example.goodreads.controller;
 
-import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.UnauthorizedException;
 import com.example.goodreads.model.dto.userDTO.*;
 import com.example.goodreads.model.entities.User;
@@ -55,7 +54,7 @@ public class UserController {
 
     @PutMapping("/user/edit/profile")
     public ResponseEntity<UserResponseDTO> editProfile(@RequestBody UserWithAddressDTO userEdited, HttpSession session, HttpServletRequest request) {
-        validateLogin(session, request);
+        validateSession(session, request);
         User u = userService.editProfile(userEdited, session);
         UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
         return ResponseEntity.ok(dto);
@@ -63,7 +62,7 @@ public class UserController {
 
     @PutMapping("/user/edit/privacy")
     public ResponseEntity<UserResponseDTO> editPrivacy(@RequestBody UserWithPrivacyDTO userEdited, HttpSession session, HttpServletRequest request) {
-        validateLogin(session, request);
+        validateSession(session, request);
         User u = userService.editPrivacy(userEdited, session);
         UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
         return ResponseEntity.ok(dto);
@@ -71,7 +70,7 @@ public class UserController {
 
     @PutMapping("/user/edit/password")
     public ResponseEntity<UserResponseDTO> changePassword(@RequestBody ChangePasswordDTO newPasswordUser, HttpSession session, HttpServletRequest request) {
-        validateLogin(session, request);
+        validateSession(session, request);
         User u = userService.changePassword(newPasswordUser, session);
         UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
         return ResponseEntity.ok(dto);
@@ -79,28 +78,25 @@ public class UserController {
 
     @PostMapping("/user/edit/photo")
     public String uploadPhoto(@RequestParam(name = "file") MultipartFile file, HttpSession session, HttpServletRequest request) {
-        validateLogin(session, request);
+        validateSession(session, request);
         return userService.uploadFile(file, request);
     }
 
     // TODO: extract in a base class
-    public static void validateLogin(HttpSession session, HttpServletRequest request) {
+    public static void validateSession(HttpSession session, HttpServletRequest request) {
         boolean newSession = session.isNew();
         boolean logged = session.getAttribute(LOGGED) != null && ((Boolean)session.getAttribute(LOGGED));
         boolean sameIP = request.getRemoteAddr().equals(session.getAttribute(LOGGED_FROM));
         if (newSession || !logged || !sameIP) {
-            throw new UnauthorizedException("Please, login!");
+            throw new UnauthorizedException("Invalid session! Please, login!");
         }
     }
 
     @PutMapping("/user/sign_out")
-    public static void logout(@RequestBody LogoutUserDTO user, HttpSession session, HttpServletRequest request){
-        Integer sessionUserId = (Integer) session.getAttribute(USER_ID);
-        Integer userId = user.getUserId();
-        if(!sessionUserId.equals(userId)){
-            throw new BadRequestException("Error! Session ended!");
-        }
+    public ResponseEntity<UserResponseDTO>  logout(@RequestBody LogoutUserDTO user, HttpSession session, HttpServletRequest request){
+        validateSession(session, request);
         session.invalidate();
+        return ResponseEntity.status(200).build();
     }
 //    @DeleteMapping("user/destroy")
 

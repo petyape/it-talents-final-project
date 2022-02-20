@@ -13,7 +13,6 @@ import com.example.goodreads.model.entities.User;
 import com.example.goodreads.model.repository.AddressRepository;
 import com.example.goodreads.model.repository.PrivacyRepository;
 import com.example.goodreads.model.repository.UserRepository;
-import com.example.goodreads.services.util.Converter;
 import com.example.goodreads.services.util.Helper;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
@@ -34,10 +33,19 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private AddressRepository addressRepository;
+
     @Autowired
     private PrivacyRepository privacyRepository;
+
+    @Autowired
+    private PrivacyService privacyService;
+
+    @Autowired
+    private AddressService addressService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
