@@ -199,7 +199,7 @@ public class UserService {
         addressRepository.deleteById(user.getAddress().getAddressId());
         privacyRepository.deleteById(user.getPrivacy().getPrivacyId());
         return "Successfully deleted user with id " + user.getUserId() + ".";
-        //TODO delete: READING CHALLENGE ENITY
+        //TODO delete: READING CHALLENGE ENTITY
         //TODO delete in rest of the tables
     }
 
