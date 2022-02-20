@@ -78,9 +78,17 @@ public class UserController extends BaseController {
     }
 
     @PutMapping("/user/sign_out")
-    public ResponseEntity<UserResponseDTO>  logout(HttpSession session, HttpServletRequest request){
+    public ResponseEntity<UserResponseDTO> logout(HttpSession session, HttpServletRequest request){
         validateSession(session, request);
         session.invalidate();
         return ResponseEntity.status(200).build();
     }
+
+    @DeleteMapping("/user/destroy")
+    public ResponseEntity<String>  deleteAccount(HttpSession session, HttpServletRequest request){
+        validateSession(session, request);
+        String msg = userService.deleteUser(session);
+        return ResponseEntity.ok(msg);
+    }
+
 }

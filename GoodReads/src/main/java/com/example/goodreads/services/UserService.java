@@ -55,7 +55,7 @@ public class UserService {
         if (u == null) {
             throw new UnauthorizedException("Wrong credentials!");
         }
-        if(!passwordEncoder.matches(password, u.getPassword())){
+        if (!passwordEncoder.matches(password, u.getPassword())) {
             throw new UnauthorizedException("Wrong credentials!");
         }
         return u;
@@ -94,7 +94,8 @@ public class UserService {
                 .genderViewableBy(Helper.Visibility.NONE.symbol)
                 .locationViewableBy(Helper.Visibility.NONE.symbol)
                 .address(address)
-                .privacy(pr).build();
+                .privacy(pr)
+                .isAdmin(false).build();
         return userRepository.save(user);
     }
 
@@ -162,7 +163,7 @@ public class UserService {
             throw new BadRequestException("Wrong user ID provided!");
         }
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
-        if(!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())){
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
             throw new DeniedPermissionException("Wrong password provided!");
         }
         if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
@@ -178,11 +179,22 @@ public class UserService {
         long loggedUser = (long) request.getSession().getAttribute(USER_ID);
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         String photoName = System.nanoTime() + "." + extension;
-        Files.copy(file.getInputStream(), new File("profile_photos" + File.separator + photoName).toPath());
+        Files.copy(file.getInputStream(), new File("uploads" + File.separator + photoName).toPath());
         User user = userRepository.findById(loggedUser).orElseThrow(() -> (new NotFoundException("User not found!")));
         user.setPhotoUrl(photoName);
         userRepository.save(user);
         return photoName;
     }
 
+    @Transactional
+    public String deleteUser(HttpSession session) {
+        long userId = (long) session.getAttribute(USER_ID);
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        userRepository.deleteById(user.getUserId());
+        addressRepository.deleteById(user.getAddress().getAddressId());
+        privacyRepository.deleteById(user.getPrivacy().getPrivacyId());
+        return "Successfully deleted user with id " + user.getUserId() + ".";
+        //TODO delete: READING CHALLENGE ENTITY
+        //TODO delete in rest of the tables
+    }
 }
