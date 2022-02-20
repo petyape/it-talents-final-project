@@ -99,7 +99,8 @@ public class UserService {
                 .genderViewableBy(Helper.Visibility.NONE.symbol)
                 .locationViewableBy(Helper.Visibility.NONE.symbol)
                 .address(address)
-                .privacy(pr).build();
+                .privacy(pr)
+                .isAdmin(false).build();
         return userRepository.save(user);
     }
 
