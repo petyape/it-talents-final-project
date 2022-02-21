@@ -14,8 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
 import java.io.File;
@@ -23,8 +21,6 @@ import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
-import static com.example.goodreads.controller.BaseController.USER_ID;
 
 @Service
 public class BookService {
@@ -39,20 +35,18 @@ public class BookService {
     @Autowired
     private AuthorRepository authorRepository;
     @Autowired
-    private ModelMapper mapper;
-    @Autowired
     private ObjectMapper objMapper;
 
     @SneakyThrows
     @Transactional
-    public Book addBook(String json, MultipartFile cover, HttpSession session) {
+    public Book addBook(String json, MultipartFile cover, long loggedUserId) {
         if (cover == null) {
             throw new BadRequestException("There is no book cover provided!");
         }
         if (json == null) {
             throw new BadRequestException("There are no book properties provided!");
         }
-        User user = userRepository.findById((long) session.getAttribute(USER_ID)).orElseThrow(() -> (new NotFoundException("User not found!")));
+        User user = userRepository.findById(loggedUserId).orElseThrow(() -> (new NotFoundException("User not found!")));
         if (!user.getIsAdmin()) {
             throw new DeniedPermissionException("Operation is not allowed!");
         }

@@ -50,7 +50,7 @@ public class UserController extends BaseController {
     @PutMapping("/user/edit/profile")
     public ResponseEntity<UserResponseDTO> editProfile(@RequestBody UserWithAddressDTO userEdited, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        User u = userService.editProfile(userEdited, session);
+        User u = userService.editProfile(userEdited, (long)session.getAttribute(USER_ID));
         UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
         return ResponseEntity.ok(dto);
     }
@@ -58,7 +58,7 @@ public class UserController extends BaseController {
     @PutMapping("/user/edit/privacy")
     public ResponseEntity<UserResponseDTO> editPrivacy(@RequestBody UserWithPrivacyDTO userEdited, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        User u = userService.editPrivacy(userEdited, session);
+        User u = userService.editPrivacy(userEdited, (long)session.getAttribute(USER_ID));
         UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
         return ResponseEntity.ok(dto);
     }
@@ -66,15 +66,15 @@ public class UserController extends BaseController {
     @PutMapping("/user/edit/password")
     public ResponseEntity<UserResponseDTO> changePassword(@RequestBody ChangePasswordDTO newPasswordUser, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        User u = userService.changePassword(newPasswordUser, session);
+        User u = userService.changePassword(newPasswordUser, (long)session.getAttribute(USER_ID));
         UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("/user/edit/photo")
+    @PutMapping("/user/edit/photo")
     public String uploadPhoto(@RequestParam(name = "file") MultipartFile file, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        return userService.uploadFile(file, request);
+        return userService.uploadFile(file, (long)session.getAttribute(USER_ID));
     }
 
     @PutMapping("/user/sign_out")
@@ -87,8 +87,16 @@ public class UserController extends BaseController {
     @DeleteMapping("/user/destroy")
     public ResponseEntity<String>  deleteAccount(HttpSession session, HttpServletRequest request){
         validateSession(session, request);
-        String msg = userService.deleteUser(session);
+        String msg = userService.deleteUser((long)session.getAttribute(USER_ID));
         return ResponseEntity.ok(msg);
     }
 
+//    @GetMapping("/user/show/add_to_friend")
+
+//    @GetMapping("/user/show/{user_id}")
+//    @GetMapping("/user/friends")
+//    @GetMapping("/user/ratings/")
+//    @GetMapping("/user/reviews/")
+//    @GetMapping("/user/bookshelves/{shelf_id}")
+//    @GetMapping("/user/bookshelves/all")
 }

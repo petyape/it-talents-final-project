@@ -20,13 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.nio.file.Files;
-
-import static com.example.goodreads.controller.UserController.USER_ID;
 
 @Service
 public class UserService {
@@ -100,12 +96,12 @@ public class UserService {
     }
 
     @Transactional
-    public User editProfile(UserWithAddressDTO dto, HttpSession session) {
+    public User editProfile(UserWithAddressDTO dto, long loggedUserId) {
         if (dto == null) {
             throw new NullPointerException("No user provided!");
         }
         long userId = dto.getUserId();
-        if ((Long) session.getAttribute(USER_ID) != userId) {
+        if (loggedUserId != userId) {
             throw new BadRequestException("Wrong user ID provided!");
         }
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
@@ -137,12 +133,12 @@ public class UserService {
     }
 
     @Transactional
-    public User editPrivacy(UserWithPrivacyDTO dto, HttpSession session) {
+    public User editPrivacy(UserWithPrivacyDTO dto, long loggedUserId) {
         if (dto == null) {
             throw new NullPointerException("No user provided!");
         }
         long userId = dto.getUserId();
-        if ((Long) session.getAttribute(USER_ID) != userId) {
+        if (loggedUserId != userId) {
             throw new BadRequestException("Wrong user ID provided!");
         }
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
@@ -154,12 +150,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User changePassword(ChangePasswordDTO dto, HttpSession session) {
+    public User changePassword(ChangePasswordDTO dto, long loggedUserId) {
         if (dto == null) {
             throw new NullPointerException("No user provided!");
         }
         long userId = dto.getUserId();
-        if ((Long) session.getAttribute(USER_ID) != userId) {
+        if (loggedUserId != userId) {
             throw new BadRequestException("Wrong user ID provided!");
         }
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
@@ -175,24 +171,22 @@ public class UserService {
     }
 
     @SneakyThrows
-    public String uploadFile(MultipartFile file, HttpServletRequest request) {
+    public String uploadFile(MultipartFile file, long loggedUserId) {
         if (file == null) {
             throw new BadRequestException("There is no photo provided!");
         }
-        long loggedUser = (long) request.getSession().getAttribute(USER_ID);
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         String photoName = System.nanoTime() + "." + extension;
         Files.copy(file.getInputStream(), new File("profile_photos" + File.separator + photoName).toPath());
-        User user = userRepository.findById(loggedUser).orElseThrow(() -> (new NotFoundException("User not found!")));
+        User user = userRepository.findById(loggedUserId).orElseThrow(() -> (new NotFoundException("User not found!")));
         user.setPhotoUrl(photoName);
         userRepository.save(user);
         return photoName;
     }
 
     @Transactional
-    public String deleteUser(HttpSession session) {
-        long userId = (long) session.getAttribute(USER_ID);
-        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+    public String deleteUser(long loggedUserId) {
+        User user = userRepository.findById(loggedUserId).orElseThrow(() -> (new NotFoundException("User not found!")));
         userRepository.deleteById(user.getUserId());
         addressRepository.deleteById(user.getAddress().getAddressId());
         privacyRepository.deleteById(user.getPrivacy().getPrivacyId());
