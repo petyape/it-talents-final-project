@@ -12,6 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -31,6 +32,7 @@ public class User {
         }
     }
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -117,14 +119,13 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<UsersBooks> books;
 
-    @ManyToMany(cascade={CascadeType.ALL})
-    @JoinTable(name="users_have_friends",
-            joinColumns={@JoinColumn(name="user_id")},
-            inverseJoinColumns={@JoinColumn(name="friend_id")})
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_have_friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
     private Set<User> friends;
-
-    @ManyToMany(mappedBy="friends", fetch = FetchType.LAZY)
-    private Set<User> mates;
 
     @ManyToMany
     @JoinTable(
