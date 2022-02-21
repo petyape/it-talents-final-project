@@ -55,7 +55,7 @@ public class UserService {
         if (u == null) {
             throw new UnauthorizedException("Wrong credentials!");
         }
-        if(!passwordEncoder.matches(password, u.getPassword())){
+        if (!passwordEncoder.matches(password, u.getPassword())) {
             throw new UnauthorizedException("Wrong credentials!");
         }
         return u;
@@ -155,7 +155,7 @@ public class UserService {
     }
 
     public User changePassword(ChangePasswordDTO dto, HttpSession session) {
-        if (dto == null){
+        if (dto == null) {
             throw new NullPointerException("No user provided!");
         }
         long userId = dto.getUserId();
@@ -163,7 +163,7 @@ public class UserService {
             throw new BadRequestException("Wrong user ID provided!");
         }
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
-        if(!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())){
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
             throw new DeniedPermissionException("Wrong password provided!");
         }
         if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
@@ -190,7 +190,7 @@ public class UserService {
     }
 
     @Transactional
-    public String deleteUser(HttpSession session){
+    public String deleteUser(HttpSession session) {
         long userId = (long) session.getAttribute(USER_ID);
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         userRepository.deleteById(user.getUserId());
@@ -200,8 +200,4 @@ public class UserService {
         //TODO delete: READING CHALLENGE ENTITY
         //TODO delete in rest of the tables
     }
-
 }
-
-
-

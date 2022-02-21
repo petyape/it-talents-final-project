@@ -75,7 +75,6 @@ Content-Type: application/json
   "email" : "testeDelete@gmail.com",
   "password" : "Aa@!lkjl123",
   "firstName" : "Petya"
-
 }
 
 ### register
@@ -86,7 +85,6 @@ Content-Type: application/json
   "email" : "s.g.sevdeva@gmail.com",
   "password" : "sanyAsevdev@22",
   "firstName" : "Sanya"
-
 }
 
 
