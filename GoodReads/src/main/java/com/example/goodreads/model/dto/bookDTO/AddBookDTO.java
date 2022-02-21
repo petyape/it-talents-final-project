@@ -1,6 +1,6 @@
-package com.example.goodreads.model.bookDTO;
+package com.example.goodreads.model.dto.bookDTO;
 
-import com.example.goodreads.model.authorDTO.AuthorWithNameDTO;
+import com.example.goodreads.model.dto.authorDTO.AuthorWithNameDTO;
 import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;

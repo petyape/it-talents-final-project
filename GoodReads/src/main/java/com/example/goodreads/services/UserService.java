@@ -59,7 +59,6 @@ public class UserService {
 
     @Transactional
     public User register(String email, String password, String firstName) {
-
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Email address is mandatory!");
         }

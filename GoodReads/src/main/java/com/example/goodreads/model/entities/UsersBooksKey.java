@@ -1,5 +1,6 @@
 package com.example.goodreads.model.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

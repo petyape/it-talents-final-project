@@ -3,8 +3,9 @@ package com.example.goodreads.services;
 import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.DeniedPermissionException;
 import com.example.goodreads.exceptions.NotFoundException;
-import com.example.goodreads.model.authorDTO.AuthorWithNameDTO;
-import com.example.goodreads.model.bookDTO.AddBookDTO;
+import com.example.goodreads.model.dto.authorDTO.AuthorWithNameDTO;
+import com.example.goodreads.model.dto.bookDTO.AddBookDTO;
+import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
 import com.example.goodreads.model.entities.*;
 import com.example.goodreads.model.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +33,10 @@ public class BookService {
     private GenreRepository genreRepository;
     @Autowired
     private AuthorRepository authorRepository;
+    @Autowired
+    private BookshelfRepository bookshelfRepository;
+    @Autowired
+    private UsersBooksRepository usersBooksRepository;
     @Autowired
     private ObjectMapper objMapper;
 
@@ -117,4 +122,33 @@ public class BookService {
         return bookRepository.save(newEdition);
     }
 
+    @Transactional
+    public Book addToShelf(AddBookToShelfDTO bookDTO, long userId) {
+        if (bookDTO == null) {
+            throw new BadRequestException("Invalid parameters!");
+        }
+        Book book = bookRepository.findById(bookDTO.getBookId())
+                .orElseThrow(() -> (new NotFoundException("Book not found!")));
+        Bookshelf bookshelf = bookshelfRepository.findById(bookDTO.getBookshelfId())
+                .orElseThrow(() -> (new NotFoundException("Bookshelf not found!")));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> (new NotFoundException("User not found!")));
+        Optional<UsersBooks> opt = usersBooksRepository.findByBookAndUser(book, user);
+        if (opt.isPresent()) {
+            if (opt.get().getBookshelf() == bookshelf) {
+                return book;
+            }
+            usersBooksRepository.deleteByBookAndUser(book, user);
+        }
+        UsersBooks record = new UsersBooks();
+        record.setBook(book);
+        record.setUser(user);
+        record.setBookshelf(bookshelf);
+        UsersBooksKey key = new UsersBooksKey();
+        key.setBookId(book.getBookId());
+        key.setUserId(userId);
+        record.setId(key);
+        usersBooksRepository.save(record);
+        return book;
+    }
 }

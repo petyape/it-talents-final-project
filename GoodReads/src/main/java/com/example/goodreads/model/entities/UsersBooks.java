@@ -1,8 +1,11 @@
 package com.example.goodreads.model.entities;
 
+import lombok.*;
+
 import javax.persistence.*;
 
-@Entity
+@Data
+@Entity(name = "users_have_books")
 public class UsersBooks {
 
     @EmbeddedId

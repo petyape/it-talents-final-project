@@ -106,7 +106,7 @@ public class User {
     private Set<Message> messagesReceived;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<Review> comments;
+    private Set<Review> reviews;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Quote> quotes;

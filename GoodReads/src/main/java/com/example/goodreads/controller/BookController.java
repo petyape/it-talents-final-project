@@ -1,6 +1,7 @@
 package com.example.goodreads.controller;
 
-import com.example.goodreads.model.bookDTO.BookResponseDTO;
+import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
+import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
 import com.example.goodreads.model.entities.Book;
 import com.example.goodreads.services.BookService;
 import org.modelmapper.ModelMapper;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -40,7 +40,16 @@ public class BookController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-//    @PostMapping("/book/add_to_shelf")
+    @PostMapping("/book/add_to_shelf")
+    public ResponseEntity<BookResponseDTO> addToShelf(@RequestBody AddBookToShelfDTO bookDTO,
+                                                      HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
+        Book b = bookService.addToShelf(bookDTO, (long)session.getAttribute(USER_ID));
+        BookResponseDTO dto = mapper.map(b, BookResponseDTO.class);
+        return ResponseEntity.ok(dto);
+    }
+
+
 //    @PostMapping("/book/rate")
 //    @PostMapping("/book/add_review")
 

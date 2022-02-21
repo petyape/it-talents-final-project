@@ -1,4 +1,4 @@
-package com.example.goodreads.model.authorDTO;
+package com.example.goodreads.model.dto.authorDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
