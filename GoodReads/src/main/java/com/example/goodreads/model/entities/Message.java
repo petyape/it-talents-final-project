@@ -6,7 +6,21 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "messages")
 public class Message {
-    private enum MessageFolder{INBOX, SAVED, SENT, TRASH}
+    public enum MessageFolder{
+        INBOX('i'), SAVED('s'), SENT('f'), TRASH('t');
+
+        public final char symbol;
+        MessageFolder(char symbol){
+            this.symbol = symbol;
+        }
+
+        public static boolean isValidGender(char symbol) {
+            return (symbol == INBOX.symbol ||
+                    symbol == SAVED.symbol ||
+                    symbol == SENT.symbol ||
+                    symbol == TRASH.symbol);
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +33,7 @@ public class Message {
     private Boolean isRead;
 
     @Column
-    private MessageFolder receiverFolder;
+    private char receiverFolder;
 
     @ManyToOne
     @JoinColumn(name = "sender_id", referencedColumnName = "user_id")

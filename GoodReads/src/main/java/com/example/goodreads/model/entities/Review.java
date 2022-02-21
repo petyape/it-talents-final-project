@@ -26,12 +26,4 @@ public class Review {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    @ManyToMany(cascade={CascadeType.ALL})
-    @JoinTable(name="reviews_have_comments",
-            joinColumns={@JoinColumn(name="review_id")},
-            inverseJoinColumns={@JoinColumn(name="comment_id")})
-    private Set<Review> comments;
-
-    @ManyToMany(mappedBy="comments", fetch = FetchType.LAZY)
-    private Set<Review> reviews;
 }
