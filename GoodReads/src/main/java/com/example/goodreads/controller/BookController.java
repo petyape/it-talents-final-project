@@ -29,18 +29,16 @@ public class BookController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-    // TODO: Ask if it's ok for users to add editions.
-    // Create addEdition method so as to add the book in editions also.
-//    @PostMapping("/book/add_edition/{book_id}")
-//    public ResponseEntity<BookResponseDTO> addEdition(@PathVariable int book_id,
-//                                                      @RequestParam(name = "user_book") String json,
-//                                                      @RequestParam(name = "cover") MultipartFile cover,
-//                                                      HttpSession session, HttpServletRequest request) {
-//        validateSession(session, request);
-//        Book b = bookService.addEdition(book_id, json, cover, session);
-//        BookResponseDTO dto = mapper.map(b, BookResponseDTO.class);
-//        return ResponseEntity.ok(dto);
-//    }
+    @PostMapping("/book/add_edition/{book_id}")
+    public ResponseEntity<BookResponseDTO> addEdition(@PathVariable long book_id,
+                                                      @RequestParam(name = "user_book") String json,
+                                                      @RequestParam(name = "cover") MultipartFile cover,
+                                                      HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
+        Book b = bookService.addEdition(book_id, json, cover, (long)session.getAttribute(USER_ID));
+        BookResponseDTO dto = mapper.map(b, BookResponseDTO.class);
+        return ResponseEntity.ok(dto);
+    }
 
 //    @PostMapping("/book/add_to_shelf")
 //    @PostMapping("/book/rate")
