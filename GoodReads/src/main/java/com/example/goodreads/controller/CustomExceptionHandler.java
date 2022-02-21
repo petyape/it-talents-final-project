@@ -2,6 +2,7 @@ package com.example.goodreads.controller;
 
 import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.DeniedPermissionException;
+import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.exceptions.UnauthorizedException;
 import com.example.goodreads.model.dto.ErrorDTO;
 import org.springframework.http.HttpStatus;
@@ -43,4 +44,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         dto.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
         return dto;
     }
+
+    @ExceptionHandler(value ={NotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorDTO handleNotFound(Exception e){
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMsg(e.getMessage());
+        dto.setStatus(HttpStatus.NOT_FOUND.value());
+        return dto;
+    }
+
+    // TODO: Global exception handler!!!
 }

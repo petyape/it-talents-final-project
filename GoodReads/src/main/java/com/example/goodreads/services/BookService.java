@@ -10,12 +10,10 @@ import com.example.goodreads.model.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.util.HashSet;
@@ -78,7 +76,8 @@ public class BookService {
             if (author != null) {
                 Optional<Author> opt = authorRepository.findById(author.getAuthorId());
                 if (opt.isPresent() && opt.get().getAuthorName().equals(author.getAuthorName())) {
-                    b.getAuthors().add(opt.get());
+                    Author currentAuthor = opt.get();
+                    bookAuthors.add(currentAuthor);
                 } else {
                     if (!author.getAuthorName().isBlank()) {
                         Author newAuthor = new Author();
@@ -96,4 +95,26 @@ public class BookService {
         b.setCoverUrl(coverName);
         return bookRepository.save(b);
     }
+
+    @Transactional
+    public Book addEdition(long bookId, String json, MultipartFile cover, long loggedUserId) {
+        Book originalBook = bookRepository.findById(bookId).orElseThrow(() -> (new NotFoundException("Book not found!")));
+        Book newEdition = addBook(json, cover, loggedUserId);
+
+        // Create book-edition record in DB
+        Set<Book> originalBookEditions = originalBook.getEditions();
+        if (originalBookEditions == null) {
+            originalBookEditions = new HashSet<>();
+        }
+        originalBookEditions.add(newEdition);
+        originalBook.setEditions(originalBookEditions);
+        bookRepository.save(originalBook);
+
+        // Create edition-book record in DB
+        Set<Book> editions = new HashSet<>();
+        editions.add(originalBook);
+        newEdition.setEditions(editions);
+        return bookRepository.save(newEdition);
+    }
+
 }

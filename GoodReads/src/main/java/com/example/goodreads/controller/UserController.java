@@ -91,8 +91,6 @@ public class UserController extends BaseController {
         return ResponseEntity.ok(msg);
     }
 
-//    @GetMapping("/user/show/add_to_friend")
-
 //    @GetMapping("/user/show/{user_id}")
 //    @GetMapping("/user/friends")
 //    @GetMapping("/user/ratings/")

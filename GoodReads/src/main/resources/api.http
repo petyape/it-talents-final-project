@@ -87,9 +87,6 @@ Content-Type: application/json
   "firstName" : "Sanya"
 }
 
-
-
-
 ### logout
 POST localhost:8484/test_table
 
