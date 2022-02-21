@@ -57,9 +57,6 @@ public class Book {
     private Set<Review> reviews;
 
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
-    private Set<Quote> quotes;
-
-    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     private Set<UsersBooks> booksPerUser;
 
     @ManyToMany(cascade={CascadeType.ALL})

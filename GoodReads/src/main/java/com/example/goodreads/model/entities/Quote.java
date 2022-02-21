@@ -25,10 +25,6 @@ public class Quote {
     @JoinColumn(name = "author_id")
     private Author author;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
-
     @ManyToMany(mappedBy = "favoriteQuotes", fetch = FetchType.LAZY)
     private Set<User> likes;
 }
