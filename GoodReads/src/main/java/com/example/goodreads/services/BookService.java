@@ -6,6 +6,7 @@ import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.model.dto.authorDTO.AuthorWithNameDTO;
 import com.example.goodreads.model.dto.bookDTO.AddBookDTO;
 import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
+import com.example.goodreads.model.dto.bookDTO.RateBookDTO;
 import com.example.goodreads.model.entities.*;
 import com.example.goodreads.model.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +38,8 @@ public class BookService {
     private BookshelfRepository bookshelfRepository;
     @Autowired
     private UsersBooksRepository usersBooksRepository;
+    @Autowired
+    private RatingRepository ratingRepository;
     @Autowired
     private ObjectMapper objMapper;
 
@@ -150,5 +153,30 @@ public class BookService {
         record.setId(key);
         usersBooksRepository.save(record);
         return book;
+    }
+
+    public Rating rateBook(RateBookDTO bookDTO, long userId) {
+        if (bookDTO == null) {
+            throw new BadRequestException("Invalid parameters!");
+        }
+        Book book = bookRepository.findById(bookDTO.getBookId())
+                .orElseThrow(() -> (new NotFoundException("Book not found!")));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> (new NotFoundException("User not found!")));
+        if (bookDTO.getRating() < 1 || bookDTO.getRating() > 5) {
+            throw new BadRequestException("Invalid rating parameters!");
+        }
+        Optional<Rating> opt = ratingRepository.findByBookAndUser(book, user);
+        Rating rating;
+        if (opt.isPresent()) {
+            rating = opt.get();
+        }
+        else {
+            rating = new Rating();
+            rating.setBook(book);
+            rating.setUser(user);
+        }
+        rating.setRating(bookDTO.getRating());
+        return ratingRepository.save(rating);
     }
 }
