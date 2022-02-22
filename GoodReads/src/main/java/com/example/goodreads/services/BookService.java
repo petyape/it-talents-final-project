@@ -40,6 +40,10 @@ public class BookService {
     @Autowired
     private UsersBooksRepository usersBooksRepository;
     @Autowired
+    private RatingRepository ratingRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
+    @Autowired
     private ObjectMapper objMapper;
     @Autowired
     private ModelMapper mapper;
@@ -233,5 +237,16 @@ public class BookService {
             throw new NotFoundException("Cover file does not exist");
         }
         return f;
+    }
+
+    @Transactional
+    public String deleteBook(long bookId, long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        if (!user.getIsAdmin()) {
+            throw new DeniedPermissionException("Operation is not allowed!");
+        }
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> (new NotFoundException("Book not found!")));
+        bookRepository.delete(book);
+        return "Successfully deleted book with id " + book.getBookId() + ".";
     }
 }

@@ -7,10 +7,9 @@ import com.example.goodreads.model.dto.bookDTO.SearchBookDTO;
 import com.example.goodreads.model.entities.Book;
 import com.example.goodreads.services.BookService;
 import lombok.SneakyThrows;
-import net.minidev.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -93,6 +92,13 @@ public class BookController extends BaseController {
         validateSession(session);
         File cover = bookService.getCover(id);
         Files.copy(cover.toPath(), response.getOutputStream());
+    }
+
+    @DeleteMapping("/book/delete/{id}")
+    public ResponseEntity<String> deleteBook(@PathVariable long id, HttpSession session, HttpServletRequest request){
+        validateSession(session, request);
+        String msg = bookService.deleteBook(id, (long) session.getAttribute(USER_ID));
+        return ResponseEntity.ok(msg);
     }
 
 
