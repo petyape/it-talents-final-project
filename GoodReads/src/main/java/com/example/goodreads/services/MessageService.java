@@ -2,6 +2,7 @@ package com.example.goodreads.services;
 
 import com.example.goodreads.exceptions.DeniedPermissionException;
 import com.example.goodreads.exceptions.NotFoundException;
+import com.example.goodreads.model.dto.messageDTO.MessagesInboxDTO;
 import com.example.goodreads.model.entities.Message;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.model.repository.MessageRepository;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MessageService {
@@ -33,6 +36,30 @@ public class MessageService {
         sender.getMessagesSent().add(message);
         receiver.getMessagesReceived().add(message);
         return message;
+    }
+
+    public List<MessagesInboxDTO> getReceivedMessages(long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        List<Message> messages= messageRepository.findMessagesByReceiver(user);
+        List<MessagesInboxDTO> msgReceivedDTO = new ArrayList<>();
+        for (Message message : messages) {
+            MessagesInboxDTO dto = new MessagesInboxDTO(message.getMessageId(), message.getReceiver().getFirstName(),
+                    message.getSender().getFirstName(), message.getMessage(), message.getSentAt());
+            msgReceivedDTO.add(dto);
+        }
+        return msgReceivedDTO;
+    }
+
+    public List<MessagesInboxDTO> getSentMessages(long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        List<Message> messages= messageRepository.findMessagesBySender(user);
+        List<MessagesInboxDTO> msgSentDTO = new ArrayList<>();
+        for (Message message : messages) {
+            MessagesInboxDTO dto = new MessagesInboxDTO(message.getMessageId(), message.getReceiver().getFirstName(),
+            message.getSender().getFirstName(), message.getMessage(), message.getSentAt());
+            msgSentDTO.add(dto);
+        }
+        return msgSentDTO;
     }
 
     private Message createMessage(String msg, User sender, User receiver, LocalDate sendAt){
