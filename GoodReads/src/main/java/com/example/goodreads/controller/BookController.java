@@ -2,17 +2,23 @@ package com.example.goodreads.controller;
 
 import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
+import com.example.goodreads.model.dto.bookDTO.GetBookDTO;
 import com.example.goodreads.model.dto.bookDTO.SearchBookDTO;
 import com.example.goodreads.model.entities.Book;
 import com.example.goodreads.services.BookService;
+import lombok.SneakyThrows;
+import net.minidev.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
+import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 
 @RestController
@@ -73,6 +79,21 @@ public class BookController extends BaseController {
         return ResponseEntity.ok(responseList);
     }
 
-//    @GetMapping("/book/show/{id}")
+    @SneakyThrows
+    @GetMapping("/book/show/{id}")
+    public ResponseEntity<GetBookDTO> getBook(@PathVariable long id, HttpSession session) {
+        validateSession(session);
+        GetBookDTO bookDTO = bookService.getBook(id);
+        return ResponseEntity.ok(bookDTO);
+    }
+
+    @SneakyThrows
+    @GetMapping("/book/cover/{id}")
+    public void getCover(@PathVariable long id, HttpSession session, HttpServletResponse response) {
+        validateSession(session);
+        File cover = bookService.getCover(id);
+        Files.copy(cover.toPath(), response.getOutputStream());
+    }
+
 
 }

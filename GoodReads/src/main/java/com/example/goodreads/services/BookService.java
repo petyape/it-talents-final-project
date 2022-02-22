@@ -6,12 +6,14 @@ import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.model.dto.authorDTO.AuthorWithNameDTO;
 import com.example.goodreads.model.dto.bookDTO.AddBookDTO;
 import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
+import com.example.goodreads.model.dto.bookDTO.GetBookDTO;
 import com.example.goodreads.model.dto.bookDTO.SearchBookDTO;
 import com.example.goodreads.model.entities.*;
 import com.example.goodreads.model.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +41,10 @@ public class BookService {
     private UsersBooksRepository usersBooksRepository;
     @Autowired
     private ObjectMapper objMapper;
+    @Autowired
+    private ModelMapper mapper;
+
+    private static final String coversFolder = "cover_photos";
 
     @SneakyThrows
     @Transactional
@@ -96,7 +102,7 @@ public class BookService {
         b.setAuthors(bookAuthors);
         String extension = FilenameUtils.getExtension(cover.getOriginalFilename());
         String coverName = System.nanoTime() + "." + extension;
-        Files.copy(cover.getInputStream(), new File("cover_photos" + File.separator + coverName).toPath());
+        Files.copy(cover.getInputStream(), new File(coversFolder + File.separator + coverName).toPath());
         b.setCoverUrl(coverName);
         return bookRepository.save(b);
     }
@@ -194,13 +200,38 @@ public class BookService {
             dto.setAuthors(authors);
             if (dto.getRatings() == 0) {
                 dto.setAvgRating(0.0);
-            }
-            else {
+            } else {
                 int sumRatings = book.getRatings().stream().mapToInt(Rating::getRating).sum();
                 dto.setAvgRating(sumRatings * 1.0 / dto.getRatings());
             }
             dtoList.add(dto);
         }
         return dtoList;
+    }
+
+    public GetBookDTO getBook(long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> (new NotFoundException("Book not found!")));
+        GetBookDTO bookDTO = mapper.map(book, GetBookDTO.class);
+        bookDTO.setRatingsNumber(book.getRatings().size());
+        bookDTO.setReviewsNumber(book.getReviews().size());
+        bookDTO.setEditionsNumber(book.getEditions().size());
+        if (bookDTO.getRatingsNumber() == 0) {
+            bookDTO.setAvgRating(0.0);
+        } else {
+            int sumRatings = book.getRatings().stream().mapToInt(Rating::getRating).sum();
+            bookDTO.setAvgRating(sumRatings * 1.0 / bookDTO.getRatingsNumber());
+        }
+        return bookDTO;
+    }
+
+    public File getCover(long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> (new NotFoundException("Book not found!")));
+        File f = new File(coversFolder + File.separator + book.getCoverUrl());
+        if(!f.exists()){
+            throw new NotFoundException("Cover file does not exist");
+        }
+        return f;
     }
 }
