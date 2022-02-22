@@ -13,6 +13,9 @@ public class Message {
     @Column
     private LocalDate sentAt;
 
+    @Column
+    private String message;
+
     @ManyToOne
     @JoinColumn(name = "sender_id", referencedColumnName = "user_id")
     private User sender;

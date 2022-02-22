@@ -1,11 +1,18 @@
 package com.example.goodreads.model.entities;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Table(name = "reviews")
+@NoArgsConstructor
+@Setter
+@Getter
 public class Review {
 
     @Id

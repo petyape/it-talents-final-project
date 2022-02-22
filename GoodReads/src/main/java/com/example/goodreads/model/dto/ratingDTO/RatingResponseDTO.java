@@ -1,4 +1,4 @@
-package com.example.goodreads.model.dto.userDTO;
+package com.example.goodreads.model.dto.ratingDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @NoArgsConstructor
 @AllArgsConstructor
 @ResponseBody
-public class UserResponseDTO {
+public class RatingResponseDTO {
 
-    private long id;
-    private String email;
+    private long ratingId;
+    private long userId;
+    private long bookId;
+    private int rating;
 
 }

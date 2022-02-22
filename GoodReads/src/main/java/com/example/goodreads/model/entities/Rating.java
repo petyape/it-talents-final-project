@@ -1,8 +1,15 @@
 package com.example.goodreads.model.entities;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "ratings")
 public class Rating {
 

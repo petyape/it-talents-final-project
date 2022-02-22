@@ -2,7 +2,10 @@ package com.example.goodreads.controller;
 
 import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
+import com.example.goodreads.model.dto.ratingDTO.RateBookDTO;
+import com.example.goodreads.model.dto.ratingDTO.RatingResponseDTO;
 import com.example.goodreads.model.entities.Book;
+import com.example.goodreads.model.entities.Rating;
 import com.example.goodreads.services.BookService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,13 +52,7 @@ public class BookController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-
-//    @PostMapping("/book/rate")
-//    @PostMapping("/book/add_review")
-
 //    @GetMapping("/book/show/{id}")
-//    @GetMapping("/book/ratings")
-//    @GetMapping("/book/reviews")
 //    @GetMapping("/search/by_title")
 //    @GetMapping("/search/by_genre")
 //    @GetMapping("/search/by_author")
