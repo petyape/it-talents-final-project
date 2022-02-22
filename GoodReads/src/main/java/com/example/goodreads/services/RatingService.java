@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @Service
 public class RatingService {
+
     @Autowired
     private RatingRepository ratingRepository;
     @Autowired
