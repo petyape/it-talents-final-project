@@ -46,8 +46,8 @@ POST localhost:8484/login
 Content-Type: application/json
 
 {
-  "email" : "petygm@gmail.com",
-  "password" : "Aa@!lkjl123"
+  "email": "test3@gmail.com",
+  "password": "Aa@!lkjl123"
 }
 
 ### delete
@@ -55,16 +55,33 @@ DELETE localhost:8484/user/destroy
 Content-Type: application/json
 
 {
-  "userId" : 37
+  "userId": 37
 }
+
+### sendMessage
+POST localhost:8484/message/new
+Content-Type: application/json
+
+{
+  "receiverId": 5,
+  "msg" : "my fourth message"
+}
+
+### getSentMessages
+GET localhost:8484/message/sent
+Content-Type: application/json
+
+### getReceivedMessages
+GET localhost:8484/message/inbox
+Content-Type: application/json
 
 ### login
 POST localhost:8484/login
 Content-Type: application/json
 
 {
-  "email" : "s.g.sevdeva@gmail.com",
-  "password" : "sanyAsevdev@22"
+  "email": "s.g.sevdeva@gmail.com",
+  "password": "sanyAsevdev@22"
 }
 
 ### register
@@ -72,9 +89,9 @@ POST localhost:8484/users
 Content-Type: application/json
 
 {
-  "email" : "testeDelete@gmail.com",
-  "password" : "Aa@!lkjl123",
-  "firstName" : "Petya"
+  "email": "testeDelete@gmail.com",
+  "password": "Aa@!lkjl123",
+  "firstName": "Petya"
 }
 
 ### register
@@ -82,9 +99,9 @@ POST localhost:8484/users
 Content-Type: application/json
 
 {
-  "email" : "s.g.sevdeva@gmail.com",
-  "password" : "sanyAsevdev@22",
-  "firstName" : "Sanya"
+  "email": "s.g.sevdeva@gmail.com",
+  "password": "sanyAsevdev@22",
+  "firstName": "Sanya"
 }
 
 ### logout
@@ -94,12 +111,13 @@ POST localhost:8484/test_table
   "firstName" : "logout"
 
 }
+
 ### delete
 DELETE localhost:8484/user/destroy
 Content-Type: application/json
 
 {
-  "userId" : 36
+  "userId": 36
 }
 
 ### editProfile
@@ -124,7 +142,7 @@ PUT localhost:8484/user/sign_out
 Content-Type: application/json
 
 {
-"userId" : 9
+  "userId": 9
 }
 
 ### get by id
