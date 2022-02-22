@@ -2,17 +2,18 @@ package com.example.goodreads.controller;
 
 import com.example.goodreads.model.dto.ratingDTO.RateBookDTO;
 import com.example.goodreads.model.dto.ratingDTO.RatingResponseDTO;
+import com.example.goodreads.model.dto.ratingDTO.RatingWithUserDTO;
 import com.example.goodreads.model.entities.Rating;
 import com.example.goodreads.services.RatingService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class RatingController extends BaseController {
@@ -30,5 +31,16 @@ public class RatingController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-//    @GetMapping("/book/ratings")
+    @GetMapping("/book/ratings/{id}")
+    public ResponseEntity<List<RatingWithUserDTO>> getBookRatings(@PathVariable long id, HttpSession session) {
+        validateSession(session);
+        List<Rating> ratings = ratingService.getBookRatings(id);
+        List<RatingWithUserDTO> responseList = new ArrayList<>();
+        ratings.forEach(r -> {
+            RatingWithUserDTO dto = mapper.map(r, RatingWithUserDTO.class);
+            dto.setName(r.getUser().getFirstName());
+            responseList.add(dto);
+        });
+        return ResponseEntity.ok(responseList);
+    }
 }

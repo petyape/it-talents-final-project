@@ -1,6 +1,6 @@
 package com.example.goodreads.controller;
 
-import com.example.goodreads.model.dto.ratingDTO.RatingResponseDTO;
+import com.example.goodreads.model.dto.ratingDTO.RatingWithUserDTO;
 import com.example.goodreads.model.dto.reviewDTO.AddReviewDTO;
 import com.example.goodreads.model.dto.reviewDTO.ReviewResponseDTO;
 import com.example.goodreads.model.entities.Rating;
@@ -9,12 +9,12 @@ import com.example.goodreads.services.ReviewService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class ReviewController extends BaseController {
@@ -22,8 +22,6 @@ public class ReviewController extends BaseController {
     private ReviewService reviewService;
     @Autowired
     private ModelMapper mapper;
-
-
 
     @PostMapping("/book/add_review")
     public ResponseEntity<ReviewResponseDTO> addReview(@RequestBody AddReviewDTO reviewDTO,
@@ -34,6 +32,4 @@ public class ReviewController extends BaseController {
         dto.setTitle(r.getBook().getTitle());
         return ResponseEntity.ok(dto);
     }
-
-//    @GetMapping("/book/reviews")
 }

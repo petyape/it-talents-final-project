@@ -20,4 +20,12 @@ public abstract class BaseController {
             throw new UnauthorizedException("Invalid session! Please, login!");
         }
     }
+
+    public static void validateSession(HttpSession session) {
+        boolean newSession = session.isNew();
+        boolean logged = session.getAttribute(LOGGED) != null && ((Boolean)session.getAttribute(LOGGED));
+        if (newSession || !logged) {
+            throw new UnauthorizedException("Invalid session! Please, login!");
+        }
+    }
 }
