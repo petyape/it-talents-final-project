@@ -46,7 +46,7 @@ POST localhost:8484/login
 Content-Type: application/json
 
 {
-  "email": "petygm@gmail.com",
+  "email": "test3@gmail.com",
   "password": "Aa@!lkjl123"
 }
 
@@ -63,9 +63,17 @@ POST localhost:8484/message/new
 Content-Type: application/json
 
 {
-  "receiverId": 3,
+  "receiverId": 5,
   "msg" : "my fourth message"
 }
+
+### getSentMessages
+GET localhost:8484/message/sent
+Content-Type: application/json
+
+### getReceivedMessages
+GET localhost:8484/message/inbox
+Content-Type: application/json
 
 ### login
 POST localhost:8484/login
