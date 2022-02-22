@@ -6,20 +6,22 @@ import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.model.dto.authorDTO.AuthorWithNameDTO;
 import com.example.goodreads.model.dto.bookDTO.AddBookDTO;
 import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
+import com.example.goodreads.model.dto.bookDTO.SearchBookDTO;
 import com.example.goodreads.model.entities.*;
 import com.example.goodreads.model.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.nio.file.Files;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.text.DecimalFormat;
+import java.util.*;
 
 @Service
 public class BookService {
@@ -151,5 +153,35 @@ public class BookService {
         record.setId(key);
         usersBooksRepository.save(record);
         return book;
+    }
+
+    public List<SearchBookDTO> searchBooksByTitle(String searchWord) {
+        if (searchWord == null || searchWord.isBlank()) {
+            throw new BadRequestException("Invalid search parameters provided!");
+        }
+        List<Book> books = bookRepository.findBooksByTitleLike("%" + searchWord + "%");
+        List<SearchBookDTO> dtoList = new ArrayList<>();
+
+        for (Book book : books) {
+            SearchBookDTO dto = SearchBookDTO.builder()
+                    .bookId(book.getBookId())
+                    .title(book.getTitle())
+                    .ratings(book.getRatings().size())
+                    .published(book.getPublishDate().getYear())
+                    .editionsNumber(book.getEditions().size())
+                    .build();
+            List<String> authors = new ArrayList<>();
+            book.getAuthors().forEach(author -> authors.add(author.getAuthorName()));
+            dto.setAuthors(authors);
+            if (dto.getRatings() == 0) {
+                dto.setAvgRating(0.0);
+            }
+            else {
+                int sumRatings = book.getRatings().stream().mapToInt(Rating::getRating).sum();
+                dto.setAvgRating(sumRatings * 1.0 / dto.getRatings());
+            }
+            dtoList.add(dto);
+        }
+        return dtoList;
     }
 }

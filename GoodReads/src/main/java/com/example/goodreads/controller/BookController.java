@@ -2,10 +2,8 @@ package com.example.goodreads.controller;
 
 import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
-import com.example.goodreads.model.dto.ratingDTO.RateBookDTO;
-import com.example.goodreads.model.dto.ratingDTO.RatingResponseDTO;
+import com.example.goodreads.model.dto.bookDTO.SearchBookDTO;
 import com.example.goodreads.model.entities.Book;
-import com.example.goodreads.model.entities.Rating;
 import com.example.goodreads.services.BookService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class BookController extends BaseController {
@@ -52,8 +52,14 @@ public class BookController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("/search/by_title/{title}")
+    public ResponseEntity<List<SearchBookDTO>> searchBooksByTitle(@PathVariable String title, HttpSession session) {
+        validateSession(session);
+        List<SearchBookDTO> responseList = bookService.searchBooksByTitle(title);
+        return ResponseEntity.ok(responseList);
+    }
+
 //    @GetMapping("/book/show/{id}")
-//    @GetMapping("/search/by_title")
 //    @GetMapping("/search/by_genre")
 //    @GetMapping("/search/by_author")
 

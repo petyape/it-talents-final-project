@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface BookRepository extends JpaRepository<Book, Long> {
 
     Optional<Book> findBookByISBN(String ISBN);
+    List<Book> findBooksByTitleLike(String searchWord);
 
 }
