@@ -2,7 +2,7 @@ package com.example.goodreads.controller;
 
 import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
-import com.example.goodreads.model.dto.bookDTO.RateBookDTO;
+import com.example.goodreads.model.dto.ratingDTO.RateBookDTO;
 import com.example.goodreads.model.dto.ratingDTO.RatingResponseDTO;
 import com.example.goodreads.model.entities.Book;
 import com.example.goodreads.model.entities.Rating;
@@ -52,21 +52,7 @@ public class BookController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("/book/rate")
-    public ResponseEntity<RatingResponseDTO> rateBook(@RequestBody RateBookDTO bookDTO,
-                                                      HttpSession session, HttpServletRequest request) {
-        validateSession(session, request);
-        Rating r = bookService.rateBook(bookDTO, (long)session.getAttribute(USER_ID));
-        RatingResponseDTO dto = mapper.map(r, RatingResponseDTO.class);
-        return ResponseEntity.ok(dto);
-    }
-
-
-//    @PostMapping("/book/add_review")
-
 //    @GetMapping("/book/show/{id}")
-//    @GetMapping("/book/ratings")
-//    @GetMapping("/book/reviews")
 //    @GetMapping("/search/by_title")
 //    @GetMapping("/search/by_genre")
 //    @GetMapping("/search/by_author")
