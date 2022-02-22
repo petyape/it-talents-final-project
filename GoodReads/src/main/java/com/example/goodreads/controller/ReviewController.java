@@ -3,6 +3,7 @@ package com.example.goodreads.controller;
 import com.example.goodreads.model.dto.ratingDTO.RatingWithUserDTO;
 import com.example.goodreads.model.dto.reviewDTO.AddReviewDTO;
 import com.example.goodreads.model.dto.reviewDTO.ReviewResponseDTO;
+import com.example.goodreads.model.dto.reviewDTO.ReviewWithUserDTO;
 import com.example.goodreads.model.entities.Rating;
 import com.example.goodreads.model.entities.Review;
 import com.example.goodreads.services.ReviewService;
@@ -31,5 +32,18 @@ public class ReviewController extends BaseController {
         ReviewResponseDTO dto = mapper.map(r, ReviewResponseDTO.class);
         dto.setTitle(r.getBook().getTitle());
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/book/reviews/{id}")
+    public ResponseEntity<List<ReviewWithUserDTO>> getBookReviews(@PathVariable long id, HttpSession session) {
+        validateSession(session);
+        List<Review> reviews = reviewService.getBookReviews(id);
+        List<ReviewWithUserDTO> responseList = new ArrayList<>();
+        reviews.forEach(r -> {
+            ReviewWithUserDTO dto = mapper.map(r, ReviewWithUserDTO.class);
+            dto.setName(r.getUser().getFirstName());
+            responseList.add(dto);
+        });
+        return ResponseEntity.ok(responseList);
     }
 }
