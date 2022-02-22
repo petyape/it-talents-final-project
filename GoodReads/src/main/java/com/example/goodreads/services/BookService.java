@@ -164,6 +164,18 @@ public class BookService {
         return extractDTOList(books);
     }
 
+    private void validateSearchWord(String searchWord) {
+        if (searchWord == null || searchWord.isBlank()) {
+            throw new BadRequestException("Invalid search parameters provided!");
+        }
+    }
+
+    public List<SearchBookDTO> searchBooksByGenre(long genreId) {
+        Genre genre = genreRepository.findById(genreId).orElseThrow(() -> (new NotFoundException("Genre not found!")));
+        List<Book> books = bookRepository.findBooksByGenre(genre);
+        return extractDTOList(books);
+    }
+
     private List<SearchBookDTO> extractDTOList(List<Book> books) {
         if (books == null) {
             throw new NotFoundException("Books not found!");
@@ -190,11 +202,5 @@ public class BookService {
             dtoList.add(dto);
         }
         return dtoList;
-    }
-
-    private void validateSearchWord(String searchWord) {
-        if (searchWord == null || searchWord.isBlank()) {
-            throw new BadRequestException("Invalid search parameters provided!");
-        }
     }
 }

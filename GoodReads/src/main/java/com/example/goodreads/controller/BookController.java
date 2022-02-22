@@ -66,7 +66,13 @@ public class BookController extends BaseController {
         return ResponseEntity.ok(responseList);
     }
 
+    @GetMapping("/search/by_genre/{id}")
+    public ResponseEntity<List<SearchBookDTO>> searchBooksByGenre(@PathVariable long id, HttpSession session) {
+        validateSession(session);
+        List<SearchBookDTO> responseList = bookService.searchBooksByGenre(id);
+        return ResponseEntity.ok(responseList);
+    }
+
 //    @GetMapping("/book/show/{id}")
-//    @GetMapping("/search/by_genre")
 
 }
