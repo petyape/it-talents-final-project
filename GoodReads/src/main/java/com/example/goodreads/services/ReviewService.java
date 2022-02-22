@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,5 +50,10 @@ public class ReviewService {
         }
         review.setReview(reviewDTO.getReview());
         return reviewRepository.save(review);
+    }
+
+    public List<Review> getBookReviews(long bookId) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> (new NotFoundException("Book not found!")));
+        return reviewRepository.findAllByBook(book);
     }
 }
