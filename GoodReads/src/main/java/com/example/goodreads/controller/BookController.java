@@ -59,8 +59,14 @@ public class BookController extends BaseController {
         return ResponseEntity.ok(responseList);
     }
 
+    @GetMapping("/search/by_author/{author}")
+    public ResponseEntity<List<SearchBookDTO>> searchBooksByAuthor(@PathVariable String author, HttpSession session) {
+        validateSession(session);
+        List<SearchBookDTO> responseList = bookService.searchBooksByAuthor(author);
+        return ResponseEntity.ok(responseList);
+    }
+
 //    @GetMapping("/book/show/{id}")
 //    @GetMapping("/search/by_genre")
-//    @GetMapping("/search/by_author")
 
 }

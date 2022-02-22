@@ -13,14 +13,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.nio.file.Files;
-import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -156,12 +153,22 @@ public class BookService {
     }
 
     public List<SearchBookDTO> searchBooksByTitle(String searchWord) {
-        if (searchWord == null || searchWord.isBlank()) {
-            throw new BadRequestException("Invalid search parameters provided!");
-        }
+        validateSearchWord(searchWord);
         List<Book> books = bookRepository.findBooksByTitleLike("%" + searchWord + "%");
-        List<SearchBookDTO> dtoList = new ArrayList<>();
+        return extractDTOList(books);
+    }
 
+    public List<SearchBookDTO> searchBooksByAuthor(String searchWord) {
+        validateSearchWord(searchWord);
+        List<Book> books = bookRepository.findBooksByAuthorNameLike("%" + searchWord + "%");
+        return extractDTOList(books);
+    }
+
+    private List<SearchBookDTO> extractDTOList(List<Book> books) {
+        if (books == null) {
+            throw new NotFoundException("Books not found!");
+        }
+        List<SearchBookDTO> dtoList = new ArrayList<>();
         for (Book book : books) {
             SearchBookDTO dto = SearchBookDTO.builder()
                     .bookId(book.getBookId())
@@ -183,5 +190,11 @@ public class BookService {
             dtoList.add(dto);
         }
         return dtoList;
+    }
+
+    private void validateSearchWord(String searchWord) {
+        if (searchWord == null || searchWord.isBlank()) {
+            throw new BadRequestException("Invalid search parameters provided!");
+        }
     }
 }
