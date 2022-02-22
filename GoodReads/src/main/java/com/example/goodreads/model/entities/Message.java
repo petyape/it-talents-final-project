@@ -1,20 +1,27 @@
 package com.example.goodreads.model.entities;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "messages")
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long messageId;
 
     @Column
-    private LocalDate sentAt;
+    private String message;
 
     @Column
-    private String message;
+    private LocalDate sentAt;
 
     @ManyToOne
     @JoinColumn(name = "sender_id", referencedColumnName = "user_id")
