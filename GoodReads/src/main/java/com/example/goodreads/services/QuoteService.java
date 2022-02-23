@@ -2,16 +2,21 @@ package com.example.goodreads.services;
 
 import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.NotFoundException;
+import com.example.goodreads.exceptions.UnauthorizedException;
 import com.example.goodreads.model.dto.quoteDTO.AddQuoteDTO;
+import com.example.goodreads.model.dto.quoteDTO.QuoteResponseDTO;
 import com.example.goodreads.model.entities.Author;
 import com.example.goodreads.model.entities.Quote;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.model.repository.AuthorRepository;
 import com.example.goodreads.model.repository.QuoteRepository;
 import com.example.goodreads.model.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,6 +29,8 @@ public class QuoteService {
     private UserRepository userRepository;
     @Autowired
     private AuthorRepository authorRepository;
+    @Autowired
+    private ModelMapper mapper;
 
     @Transactional
     public Quote addQuote(AddQuoteDTO quoteDTO, long userId) {
@@ -83,5 +90,44 @@ public class QuoteService {
         user.setFavoriteQuotes(likedQuotes);
         userRepository.save(user);
         return quote;
+    }
+
+    public List<QuoteResponseDTO> getAllQuotes() {
+        List<Quote> quotes = quoteRepository.findAll();
+        List<QuoteResponseDTO> dtoList = new ArrayList<>();
+        for (Quote quote : quotes) {
+            dtoList.add(mapper.map(quote, QuoteResponseDTO.class));
+        }
+        return dtoList;
+    }
+
+    public List<QuoteResponseDTO> getFavQuotes(long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        Set<Quote> quotes = user.getFavoriteQuotes();
+        List<QuoteResponseDTO> dtoList = new ArrayList<>();
+        for (Quote quote : quotes) {
+            dtoList.add(mapper.map(quote, QuoteResponseDTO.class));
+        }
+        return dtoList;
+    }
+
+    public List<QuoteResponseDTO> getMyQuotes(long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        Set<Quote> quotes = user.getQuotes();
+        List<QuoteResponseDTO> dtoList = new ArrayList<>();
+        for (Quote quote : quotes) {
+            dtoList.add(mapper.map(quote, QuoteResponseDTO.class));
+        }
+        return dtoList;
+    }
+
+    public String deleteQuote(long quoteId, long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        Quote quote = quoteRepository.findById(quoteId).orElseThrow(() -> (new NotFoundException("Quote not found!")));
+        if (quote.getUser() != user) {
+            throw new UnauthorizedException("Quotes can be deleted by their publishers only!");
+        }
+        quoteRepository.delete(quote);
+        return "Successfully deleted quote with id " + quote.getQuoteId() + ".";
     }
 }

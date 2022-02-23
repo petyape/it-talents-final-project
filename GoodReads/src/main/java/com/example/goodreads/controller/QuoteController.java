@@ -1,18 +1,16 @@
 package com.example.goodreads.controller;
 
-import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
 import com.example.goodreads.model.dto.quoteDTO.AddQuoteDTO;
 import com.example.goodreads.model.dto.quoteDTO.QuoteResponseDTO;
-import com.example.goodreads.model.entities.Book;
 import com.example.goodreads.model.entities.Quote;
 import com.example.goodreads.services.QuoteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 public class QuoteController extends BaseController {
@@ -41,11 +39,32 @@ public class QuoteController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("/quotes")
+    public ResponseEntity<List<QuoteResponseDTO>> getAllQuotes(HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
+        List<QuoteResponseDTO> dtoList = quoteService.getAllQuotes();
+        return ResponseEntity.ok(dtoList);
+    }
 
-//    @GetMapping("/quotes")
-//    @GetMapping("/quotes/fav")
-//    @GetMapping("/quotes/my_quotes")
+    @GetMapping("/quotes/fav")
+    public ResponseEntity<List<QuoteResponseDTO>> getFavQuotes(HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
+        List<QuoteResponseDTO> dtoList = quoteService.getFavQuotes((long) session.getAttribute(USER_ID));
+        return ResponseEntity.ok(dtoList);
+    }
 
-//    @DeleteMapping("quote/{id}")
+    @GetMapping("/quotes/my_quotes")
+    public ResponseEntity<List<QuoteResponseDTO>> getMyQuotes(HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
+        List<QuoteResponseDTO> dtoList = quoteService.getMyQuotes((long) session.getAttribute(USER_ID));
+        return ResponseEntity.ok(dtoList);
+    }
+
+    @DeleteMapping("quote/delete/{id}")
+    public ResponseEntity<String> deleteQuote(@PathVariable long id, HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
+        String message = quoteService.deleteQuote(id, (long) session.getAttribute(USER_ID));
+        return ResponseEntity.ok(message);
+    }
 
 }
