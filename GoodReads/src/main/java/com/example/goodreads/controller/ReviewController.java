@@ -1,5 +1,6 @@
 package com.example.goodreads.controller;
 
+import com.example.goodreads.model.dto.ratingDTO.UserRatingsResponseDTO;
 import com.example.goodreads.model.dto.reviewDTO.*;
 import com.example.goodreads.model.entities.Review;
 import com.example.goodreads.services.ReviewService;
@@ -43,21 +44,10 @@ public class ReviewController extends BaseController {
         return ResponseEntity.ok(responseList);
     }
 
-    @GetMapping("/user/reviews")
-    public ResponseEntity<List<UserReviewsResponseDTO>> getUserReviews(HttpSession session, HttpServletRequest request) {
-        validateSession(session, request);
-        long id = (long) session.getAttribute(USER_ID);
-        List<Review> reviews = reviewService.getUserReviews(id);
-        List<UserReviewsResponseDTO> listDTO = new ArrayList<>();
-        reviews.forEach( r -> {
-            UserReviewsResponseDTO dto = mapper.map(r, UserReviewsResponseDTO.class);
-            dto.setReview(r.getReview());
-            dto.setReviewId(r.getReviewId());
-            dto.setUserId(r.getUser().getUserId());
-            dto.setFirstName(r.getUser().getFirstName());
-            dto.setTitle(r.getBook().getTitle());
-            listDTO.add(dto);
-        });
-        return ResponseEntity.ok(listDTO);
+    @GetMapping("/user/reviews/{id}")
+    public ResponseEntity<List<UserReviewsResponseDTO>> getUserReviews(@PathVariable long id, HttpSession session, HttpServletRequest request) {
+        validateSession(session);
+        List<UserReviewsResponseDTO> responseList = reviewService.getUserReviews(id);
+        return ResponseEntity.ok(responseList);
     }
 }

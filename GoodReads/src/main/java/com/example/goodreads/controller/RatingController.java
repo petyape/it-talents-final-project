@@ -3,6 +3,7 @@ package com.example.goodreads.controller;
 import com.example.goodreads.model.dto.ratingDTO.RateBookDTO;
 import com.example.goodreads.model.dto.ratingDTO.RatingResponseDTO;
 import com.example.goodreads.model.dto.ratingDTO.RatingWithUserDTO;
+import com.example.goodreads.model.dto.ratingDTO.UserRatingsResponseDTO;
 import com.example.goodreads.model.entities.Rating;
 import com.example.goodreads.services.RatingService;
 import org.modelmapper.ModelMapper;
@@ -34,13 +35,15 @@ public class RatingController extends BaseController {
     @GetMapping("/book/ratings/{id}")
     public ResponseEntity<List<RatingWithUserDTO>> getBookRatings(@PathVariable long id, HttpSession session) {
         validateSession(session);
-        List<Rating> ratings = ratingService.getBookRatings(id);
-        List<RatingWithUserDTO> responseList = new ArrayList<>();
-        ratings.forEach(r -> {
-            RatingWithUserDTO dto = mapper.map(r, RatingWithUserDTO.class);
-            dto.setName(r.getUser().getFirstName());
-            responseList.add(dto);
-        });
+        List<RatingWithUserDTO> responseList = ratingService.getBookRatings(id);
         return ResponseEntity.ok(responseList);
     }
+
+    @GetMapping("/user/ratings/{id}")
+    public ResponseEntity<List<UserRatingsResponseDTO>> getUserRatings(@PathVariable long id, HttpSession session) {
+        validateSession(session);
+        List<UserRatingsResponseDTO> responseList = ratingService.getUserRatings(id);
+        return ResponseEntity.ok(responseList);
+    }
+
 }

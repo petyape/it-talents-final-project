@@ -2,17 +2,22 @@ package com.example.goodreads.services;
 
 import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.NotFoundException;
+import com.example.goodreads.model.dto.ratingDTO.UserRatingsResponseDTO;
 import com.example.goodreads.model.dto.reviewDTO.AddReviewDTO;
+import com.example.goodreads.model.dto.reviewDTO.UserReviewsResponseDTO;
 import com.example.goodreads.model.entities.Book;
+import com.example.goodreads.model.entities.Rating;
 import com.example.goodreads.model.entities.Review;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.model.repository.BookRepository;
 import com.example.goodreads.model.repository.ReviewRepository;
 import com.example.goodreads.model.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +30,8 @@ public class ReviewService {
     private ReviewRepository reviewRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ModelMapper mapper;
 
     public Review addReview(AddReviewDTO reviewDTO, long userId) {
         if (reviewDTO == null) {
@@ -57,10 +64,17 @@ public class ReviewService {
         return reviewRepository.findAllByBook(book);
     }
 
-
-    public List<Review> getUserReviews(long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> (new NotFoundException("User not found!")));
-        return  reviewRepository.findAllByUser(user);
+    public List<UserReviewsResponseDTO> getUserReviews(long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+        List<UserReviewsResponseDTO> responseList = new ArrayList<>();
+        reviews.forEach(r -> {
+            UserReviewsResponseDTO dto = mapper.map(r, UserReviewsResponseDTO.class);
+            dto.setTitle(r.getBook().getTitle());
+            dto.setFirstName(r.getUser().getFirstName());
+            responseList.add(dto);
+        });
+        return responseList;
     }
 
 }

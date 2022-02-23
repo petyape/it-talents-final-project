@@ -3,15 +3,19 @@ package com.example.goodreads.services;
 import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.model.dto.ratingDTO.RateBookDTO;
+import com.example.goodreads.model.dto.ratingDTO.RatingWithUserDTO;
+import com.example.goodreads.model.dto.ratingDTO.UserRatingsResponseDTO;
 import com.example.goodreads.model.entities.Book;
 import com.example.goodreads.model.entities.Rating;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.model.repository.BookRepository;
 import com.example.goodreads.model.repository.RatingRepository;
 import com.example.goodreads.model.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +28,8 @@ public class RatingService {
     private UserRepository userRepository;
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private ModelMapper mapper;
 
     public Rating rateBook(RateBookDTO ratingDTO, long userId) {
         if (ratingDTO == null) {
@@ -53,8 +59,28 @@ public class RatingService {
         return ratingRepository.save(rating);
     }
 
-    public List<Rating> getBookRatings(long bookId) {
+    public List<RatingWithUserDTO> getBookRatings(long bookId) {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> (new NotFoundException("Book not found!")));
-        return ratingRepository.findAllByBook(book);
+        List<Rating> ratings = ratingRepository.findAllByBook(book);
+        List<RatingWithUserDTO> responseList = new ArrayList<>();
+        ratings.forEach(r -> {
+            RatingWithUserDTO dto = mapper.map(r, RatingWithUserDTO.class);
+            dto.setName(r.getUser().getFirstName());
+            responseList.add(dto);
+        });
+        return responseList;
+    }
+
+    public List<UserRatingsResponseDTO> getUserRatings(long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        List<Rating> ratings = ratingRepository.findAllByUser(user);
+        List<UserRatingsResponseDTO> responseList = new ArrayList<>();
+        ratings.forEach(r -> {
+            UserRatingsResponseDTO dto = mapper.map(r, UserRatingsResponseDTO.class);
+            dto.setTitle(r.getBook().getTitle());
+            dto.setFirstName(r.getUser().getFirstName());
+            responseList.add(dto);
+        });
+        return responseList;
     }
 }

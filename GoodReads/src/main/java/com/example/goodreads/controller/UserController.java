@@ -1,20 +1,20 @@
 package com.example.goodreads.controller;
 
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
-import com.example.goodreads.model.dto.bookDTO.BookShelfResponseDTO;
-import com.example.goodreads.model.dto.bookDTO.GetBookDTO;
 import com.example.goodreads.model.dto.userDTO.*;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.services.UserService;
+import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 
 @RestController
@@ -94,7 +94,6 @@ public class UserController extends BaseController {
         return ResponseEntity.ok(msg);
     }
 
-
     @GetMapping("/user/bookshelves/{id}")
     public ResponseEntity<List<BookResponseDTO>> getUserBookshelf(@PathVariable long id,
                                                                   HttpSession session, HttpServletRequest request) {
@@ -110,10 +109,12 @@ public class UserController extends BaseController {
         GetUserDTO userDTO = userService.getUser(id, (long) session.getAttribute(USER_ID));
         return ResponseEntity.ok(userDTO);
     }
-//
-//    @GetMapping("/user/photo/{id}")
 
-
-//    @GetMapping("/user/ratings/")
-
+    @SneakyThrows
+    @GetMapping("/user/photo/{id}")
+    public void getPhoto(@PathVariable long id, HttpSession session, HttpServletResponse response) {
+        validateSession(session);
+        File photo = userService.getPhoto(id);
+        Files.copy(photo.toPath(), response.getOutputStream());
+    }
 }

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.transaction.Transactional;
 import java.io.File;
 import java.nio.file.Files;
@@ -44,6 +43,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private ModelMapper mapper;
+
+    private static final String photosFolder = "profile_photos";
 
     public User login(String email, String password) {
         if (email == null || email.isBlank()) {
@@ -192,14 +193,12 @@ public class UserService {
     }
 
     @Transactional
-    public String deleteUser(long loggedUserId) {
-        User user = userRepository.findById(loggedUserId).orElseThrow(() -> (new NotFoundException("User not found!")));
-        userRepository.deleteById(user.getUserId());
+    public String deleteUser(long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        userRepository.delete(user);
         addressRepository.deleteById(user.getAddress().getAddressId());
         privacyRepository.deleteById(user.getPrivacy().getPrivacyId());
         return "Successfully deleted user with id " + user.getUserId() + ".";
-        //TODO delete: READING CHALLENGE ENTITY
-        //TODO delete in rest of the tables
     }
 
 
@@ -268,4 +267,13 @@ public class UserService {
         return dto;
     }
 
+    public File getPhoto(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> (new NotFoundException("User not found!")));
+        File f = new File(photosFolder + File.separator + user.getPhotoUrl());
+        if(!f.exists()){
+            throw new NotFoundException("Profile photo does not exist");
+        }
+        return f;
+    }
 }
