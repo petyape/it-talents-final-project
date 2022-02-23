@@ -1,10 +1,6 @@
 package com.example.goodreads.controller;
 
-import com.example.goodreads.model.dto.ratingDTO.RatingWithUserDTO;
-import com.example.goodreads.model.dto.reviewDTO.AddReviewDTO;
-import com.example.goodreads.model.dto.reviewDTO.ReviewResponseDTO;
-import com.example.goodreads.model.dto.reviewDTO.ReviewWithUserDTO;
-import com.example.goodreads.model.entities.Rating;
+import com.example.goodreads.model.dto.reviewDTO.*;
 import com.example.goodreads.model.entities.Review;
 import com.example.goodreads.services.ReviewService;
 import org.modelmapper.ModelMapper;
@@ -28,7 +24,7 @@ public class ReviewController extends BaseController {
     public ResponseEntity<ReviewResponseDTO> addReview(@RequestBody AddReviewDTO reviewDTO,
                                                        HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        Review r = reviewService.addReview(reviewDTO, (long)session.getAttribute(USER_ID));
+        Review r = reviewService.addReview(reviewDTO, (long) session.getAttribute(USER_ID));
         ReviewResponseDTO dto = mapper.map(r, ReviewResponseDTO.class);
         dto.setTitle(r.getBook().getTitle());
         return ResponseEntity.ok(dto);
@@ -45,5 +41,23 @@ public class ReviewController extends BaseController {
             responseList.add(dto);
         });
         return ResponseEntity.ok(responseList);
+    }
+
+    @GetMapping("/user/reviews")
+    public ResponseEntity<List<UserReviewsResponseDTO>> getUserReviews(HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
+        long id = (long) session.getAttribute(USER_ID);
+        List<Review> reviews = reviewService.getUserReviews(id);
+        List<UserReviewsResponseDTO> listDTO = new ArrayList<>();
+        reviews.forEach( r -> {
+            UserReviewsResponseDTO dto = mapper.map(r, UserReviewsResponseDTO.class);
+            dto.setReview(r.getReview());
+            dto.setReviewId(r.getReviewId());
+            dto.setUserId(r.getUser().getUserId());
+            dto.setFirstName(r.getUser().getFirstName());
+            dto.setTitle(r.getBook().getTitle());
+            listDTO.add(dto);
+        });
+        return ResponseEntity.ok(listDTO);
     }
 }
