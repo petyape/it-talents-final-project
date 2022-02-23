@@ -80,8 +80,8 @@ public class BookController extends BaseController {
 
     @SneakyThrows
     @GetMapping("/book/show/{id}")
-    public ResponseEntity<GetBookDTO> getBook(@PathVariable long id, HttpSession session) {
-        validateSession(session);
+    public ResponseEntity<GetBookDTO> getBook(@PathVariable long id,HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
         GetBookDTO bookDTO = bookService.getBook(id);
         return ResponseEntity.ok(bookDTO);
     }
@@ -100,6 +100,5 @@ public class BookController extends BaseController {
         String msg = bookService.deleteBook(id, (long) session.getAttribute(USER_ID));
         return ResponseEntity.ok(msg);
     }
-
 
 }

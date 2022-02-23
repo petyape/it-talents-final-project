@@ -2,6 +2,7 @@ package com.example.goodreads.controller;
 
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
 import com.example.goodreads.model.dto.bookDTO.BookShelfResponseDTO;
+import com.example.goodreads.model.dto.bookDTO.GetBookDTO;
 import com.example.goodreads.model.dto.userDTO.*;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.services.UserService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -94,15 +96,24 @@ public class UserController extends BaseController {
 
 
     @GetMapping("/user/bookshelves/{id}")
-    public ResponseEntity<List<BookResponseDTO>> getUserBookshelf(@PathVariable long id, HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<List<BookResponseDTO>> getUserBookshelf(@PathVariable long id,
+                                                                  HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         long userId = (long) session.getAttribute(USER_ID);
         List<BookResponseDTO> dto = userService.getUserBookshelf(id, userId);
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("user/show/{id}")
+    public ResponseEntity<GetUserDTO> getUser(@PathVariable long id, HttpSession session) {
+        validateSession(session);
+        GetUserDTO userDTO = userService.getUser(id, (long) session.getAttribute(USER_ID));
+        return ResponseEntity.ok(userDTO);
+    }
+//
+//    @GetMapping("/user/photo/{id}")
 
-//    public ResponseEntity<UserResponseDTO> getUser()
+
 //    @GetMapping("/user/ratings/")
 
 }

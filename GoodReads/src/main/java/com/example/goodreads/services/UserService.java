@@ -204,8 +204,12 @@ public class UserService {
 
 
     public List<BookResponseDTO> getUserBookshelf(long id, long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
-        Bookshelf shelf = bookshelfRepository.findBookshelfByBookshelfId(id);
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> (new NotFoundException("User not found!")));
+        Bookshelf shelf = bookshelfRepository
+                .findById(id)
+                .orElseThrow(() -> (new NotFoundException("Bookshelf not found!")));;
         List<Book> userBooks = bookRepository.findBooksByUserIdAndBookshelfId(userId, id);
         List<BookResponseDTO> booksPerUserDTO = new ArrayList<>();
         userBooks.forEach(b -> {
@@ -216,40 +220,52 @@ public class UserService {
     }
 
 
-    public User getUser(long id, long userId) {
-        User user = userRepository.findById(id).orElseThrow(() -> (new NotFoundException("User not found!")));
-        User loggedUser = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
-        if (user.getPrivacy().getViewProfile() == 'n') {
-            throw new DeniedPermissionException("Sorry, this user is private!");
-        }
-        if (user.getPrivacy().getViewProfile() == 'f') {
-            if (!user.getFriends().contains(loggedUser)) {
-                throw new DeniedPermissionException(("Sorry you are not friends with " + user.getFirstName()));
+    public GetUserDTO getUser(long userId, long loggedUserId) {
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> (new NotFoundException("User not found!")));
+        User loggedUser = userRepository
+                .findById(loggedUserId)
+                .orElseThrow(() -> (new NotFoundException("User not found!")));
+
+        GetUserDTO dto = mapper.map(user, GetUserDTO.class);
+        boolean isFriend = false;
+
+        if (userId != loggedUserId) {
+            isFriend = user.getFriends().contains(loggedUser);
+            if (Helper.Visibility.getVisibility(user.getPrivacy().getViewProfile()) == Helper.Visibility.NONE) {
+                throw new DeniedPermissionException("Private user!");
+            }
+            if (Helper.Visibility.getVisibility(user.getPrivacy().getViewProfile()) == Helper.Visibility.FRIENDS) {
+                if (!isFriend) {
+                    throw new DeniedPermissionException(("User can be viewed by friends only!"));
+                }
+            }
+            if (!user.getShowLastName() && !isFriend) {
+                dto.setLastName(null);
+            }
+            if (!user.getPrivacy().getIsEmailVisible() && !isFriend) {
+                dto.setEmail(null);
+            }
+            Helper.Visibility genderVisibility = Helper.Visibility.getVisibility(user.getGenderViewableBy());
+            if (genderVisibility == Helper.Visibility.FRIENDS && !isFriend || genderVisibility == Helper.Visibility.NONE) {
+                dto.setGender(' ');
             }
         }
-        GetUserResponseDTO dto = new GetUserResponseDTO();
-        if (user.getShowLastName()) {
-            dto.setLastName(user.getLastName());
+        if (user.getPrivacy().getCanDisplayReviews() || isFriend || userId == loggedUserId) {
+            dto.setNumberOfReviews(user.getReviews().size());
         }
-        if (user.getPrivacy().getIsEmailVisible()) {
-            dto.setEmail(user.getEmail());
+        dto.setNumberOfRatings(user.getRatings().size());
+        if (dto.getNumberOfRatings() == 0) {
+            dto.setAverageRatings(0.0);
+        } else {
+            int sumRatings = user.getRatings().stream().mapToInt(Rating::getRating).sum();
+            dto.setAverageRatings(sumRatings * 1.0 / dto.getNumberOfRatings());
         }
-        if (user.getGenderViewableBy() == 'f') {
-            if (!user.getFriends().contains(loggedUser)) {
-                dto.setGender(user.getGender());
-            }
-        }
-        if (user.getGenderViewableBy() == 'e') {
-            dto.setGender(user.getGender());
-        }
-        if (user.getPrivacy().getCanDisplayReviews()) {
-//            List<ReviewResponseDTO> reviews = reviewService.getUserReviews(id);
-//            dto.setReviews(reviews);
-        }
-
-
-        //TODO to get person's shelves
-        return null;
+        dto.setRead(bookRepository.countBookByBookshelfIdAndUserId(1, dto.getUserId()));
+        dto.setCurrentlyReading(bookRepository.countBookByBookshelfIdAndUserId(2, dto.getUserId()));
+        dto.setWantToRead(bookRepository.countBookByBookshelfIdAndUserId(3, dto.getUserId()));
+        return dto;
     }
 
 }

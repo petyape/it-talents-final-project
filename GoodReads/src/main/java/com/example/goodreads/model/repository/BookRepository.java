@@ -29,7 +29,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
 
     @Query(value = "SELECT * FROM books AS b " +
-            "Join users_have_books AS uhb " +
+            "JOIN users_have_books AS uhb " +
             "ON (uhb.book_id = b.book_id) " +
             "JOIN bookshelves AS sh " +
             "ON (sh.bookshelf_id = uhb.bookshelf_id) " +
@@ -41,10 +41,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findBooksByUserIdAndBookshelfId(long userId, long bookshelfId);
 
 
-    @Query(value = "SELECT count(book_id)" +
-            " from users_have_books " +
-            "where (bookshelf_id = ?1) " +
-            "and (user_id = ?2)",
+    @Query(value = "SELECT count(book_id) " +
+            "FROM users_have_books " +
+            "WHERE (bookshelf_id = ?1) " +
+            "AND (user_id = ?2)",
             nativeQuery = true)
-    long countBookByUserIdAndBookshelfId(long bookshelf_id, long user_id);
+    long countBookByBookshelfIdAndUserId(long bookshelf_id, long user_id);
 }

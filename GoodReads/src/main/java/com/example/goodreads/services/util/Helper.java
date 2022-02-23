@@ -16,6 +16,12 @@ public class Helper {
                     symbol == EVERYONE.symbol ||
                     symbol == FRIENDS.symbol);
         }
+
+        public static Visibility getVisibility(char symbol) {
+            if (symbol == 'e') {return EVERYONE;}
+            if (symbol == 'f') {return FRIENDS;}
+            return NONE;
+        }
     }
 
     public static Boolean isValidEmail(String email) {
