@@ -56,4 +56,11 @@ public class ReviewService {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> (new NotFoundException("Book not found!")));
         return reviewRepository.findAllByBook(book);
     }
+
+
+    public List<Review> getUserReviews(long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> (new NotFoundException("User not found!")));
+        return  reviewRepository.findAllByUser(user);
+    }
+
 }

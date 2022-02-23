@@ -89,10 +89,8 @@ public class UserController extends BaseController {
         return ResponseEntity.ok(msg);
     }
 
-//    @GetMapping("/user/show/{user_id}")
-//    @GetMapping("/user/friends")
+//    public ResponseEntity<UserResponseDTO> getUser()
 //    @GetMapping("/user/ratings/")
-//    @GetMapping("/user/reviews/")
 //    @GetMapping("/user/bookshelves/{shelf_id}")
 //    @GetMapping("/user/bookshelves/all")
 }
