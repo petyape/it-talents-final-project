@@ -87,13 +87,13 @@ public class BookService {
         for (AuthorWithNameDTO author : authors) {
             if (author != null) {
                 Optional<Author> opt = authorRepository.findById(author.getAuthorId());
-                if (opt.isPresent() && opt.get().getAuthorName().equals(author.getAuthorName())) {
+                if (opt.isPresent() && opt.get().getAuthorName().equals(author.getAuthorName().trim())) {
                     Author currentAuthor = opt.get();
                     bookAuthors.add(currentAuthor);
                 } else {
                     if (!author.getAuthorName().isBlank()) {
                         Author newAuthor = new Author();
-                        newAuthor.setAuthorName(author.getAuthorName());
+                        newAuthor.setAuthorName(author.getAuthorName().trim());
                         authorRepository.save(newAuthor);
                         bookAuthors.add(newAuthor);
                     }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
@@ -55,5 +56,13 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return dto;
     }
 
-    // TODO: Global exception handler!!!
+    @ExceptionHandler(value ={Exception.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public ErrorDTO handleException(Exception e){
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMsg("Sorry, an unexpected error occurred!");
+        dto.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return dto;
+    }
 }
