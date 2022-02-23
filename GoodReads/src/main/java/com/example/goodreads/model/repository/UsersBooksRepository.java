@@ -13,5 +13,6 @@ public interface UsersBooksRepository extends JpaRepository<UsersBooks, Long> {
 
     Optional<UsersBooks> findByBookAndUser(Book book, User user);
     void deleteByBookAndUser(Book book, User user);
+    void deleteByBook(Book book);
 
 }
