@@ -1,8 +1,13 @@
 package com.example.goodreads.model.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "bookshelves")
 public class Bookshelf {

@@ -4,25 +4,24 @@ import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.DeniedPermissionException;
 import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.exceptions.UnauthorizedException;
-import com.example.goodreads.model.dto.userDTO.ChangePasswordDTO;
-import com.example.goodreads.model.dto.userDTO.UserWithAddressDTO;
-import com.example.goodreads.model.dto.userDTO.UserWithPrivacyDTO;
-import com.example.goodreads.model.entities.Address;
-import com.example.goodreads.model.entities.Privacy;
-import com.example.goodreads.model.entities.User;
-import com.example.goodreads.model.repository.AddressRepository;
-import com.example.goodreads.model.repository.PrivacyRepository;
-import com.example.goodreads.model.repository.UserRepository;
+import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
+import com.example.goodreads.model.dto.userDTO.*;
+import com.example.goodreads.model.entities.*;
+import com.example.goodreads.model.repository.*;
 import com.example.goodreads.services.util.Helper;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.transaction.Transactional;
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -34,11 +33,17 @@ public class UserService {
     @Autowired
     private PrivacyRepository privacyRepository;
     @Autowired
+    private BookshelfRepository bookshelfRepository;
+    @Autowired
+    private BookRepository bookRepository;
+    @Autowired
     private PrivacyService privacyService;
     @Autowired
     private AddressService addressService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ModelMapper mapper;
 
     public User login(String email, String password) {
         if (email == null || email.isBlank()) {
@@ -67,6 +72,9 @@ public class UserService {
         }
         if (password == null || password.isBlank()) {
             throw new BadRequestException("Password is mandatory!");
+        }
+        if (firstName.trim().length() < 2) {
+            throw new BadRequestException("Name is too short!");
         }
         Helper.validatePassword(password);
         if (userRepository.findByEmail(email) != null) {
@@ -193,4 +201,55 @@ public class UserService {
         //TODO delete: READING CHALLENGE ENTITY
         //TODO delete in rest of the tables
     }
+
+
+    public List<BookResponseDTO> getUserBookshelf(long id, long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        Bookshelf shelf = bookshelfRepository.findBookshelfByBookshelfId(id);
+        List<Book> userBooks = bookRepository.findBooksByUserIdAndBookshelfId(userId, id);
+        List<BookResponseDTO> booksPerUserDTO = new ArrayList<>();
+        userBooks.forEach(b -> {
+            BookResponseDTO dto = mapper.map(b, BookResponseDTO.class);
+            booksPerUserDTO.add(dto);
+        });
+        return booksPerUserDTO;
+    }
+
+
+    public User getUser(long id, long userId) {
+        User user = userRepository.findById(id).orElseThrow(() -> (new NotFoundException("User not found!")));
+        User loggedUser = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        if (user.getPrivacy().getViewProfile() == 'n') {
+            throw new DeniedPermissionException("Sorry, this user is private!");
+        }
+        if (user.getPrivacy().getViewProfile() == 'f') {
+            if (!user.getFriends().contains(loggedUser)) {
+                throw new DeniedPermissionException(("Sorry you are not friends with " + user.getFirstName()));
+            }
+        }
+        GetUserResponseDTO dto = new GetUserResponseDTO();
+        if (user.getShowLastName()) {
+            dto.setLastName(user.getLastName());
+        }
+        if (user.getPrivacy().getIsEmailVisible()) {
+            dto.setEmail(user.getEmail());
+        }
+        if (user.getGenderViewableBy() == 'f') {
+            if (!user.getFriends().contains(loggedUser)) {
+                dto.setGender(user.getGender());
+            }
+        }
+        if (user.getGenderViewableBy() == 'e') {
+            dto.setGender(user.getGender());
+        }
+        if (user.getPrivacy().getCanDisplayReviews()) {
+//            List<ReviewResponseDTO> reviews = reviewService.getUserReviews(id);
+//            dto.setReviews(reviews);
+        }
+
+
+        //TODO to get person's shelves
+        return null;
+    }
+
 }
