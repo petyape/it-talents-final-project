@@ -9,10 +9,8 @@ import com.example.goodreads.services.QuoteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -34,8 +32,14 @@ public class QuoteController extends BaseController {
 
     }
 
-
-//    @PutMapping("/quotes/react") -> like/dislike (2methods in service)
+    @PutMapping("/quotes/react/{quote_id}")
+    public ResponseEntity<QuoteResponseDTO> reactOnQuote(@PathVariable long quote_id,
+                                                         HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
+        Quote q = quoteService.reactOnQuote(quote_id, (long)session.getAttribute(USER_ID));
+        QuoteResponseDTO dto = mapper.map(q, QuoteResponseDTO.class);
+        return ResponseEntity.ok(dto);
+    }
 
 
 //    @GetMapping("/quotes")

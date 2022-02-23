@@ -139,5 +139,5 @@ public class User {
             name = "users_like_quotes",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "quote_id"))
-    private Set<Genre> favoriteQuotes;
+    private Set<Quote> favoriteQuotes;
 }

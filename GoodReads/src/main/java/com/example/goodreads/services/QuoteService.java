@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class QuoteService {
@@ -58,9 +59,6 @@ public class QuoteService {
                 }
             }
         }
-
-        // Check if author id is present
-        // Check if author is saved
         return quoteRepository.save(quote);
     }
 
@@ -68,5 +66,22 @@ public class QuoteService {
         Author newAuthor = new Author();
         newAuthor.setAuthorName(name.trim());
         return authorRepository.save(newAuthor);
+    }
+
+    public Quote reactOnQuote(long quoteId, long userId) {
+        Quote quote = quoteRepository.findById(quoteId).orElseThrow(() -> (new NotFoundException("Quote not found!")));
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+
+        Set<Quote> likedQuotes = user.getFavoriteQuotes();
+        if (likedQuotes.contains(quote)) {
+            // Dislike
+            likedQuotes.remove(quote);
+        } else {
+            // Like
+            likedQuotes.add(quote);
+        }
+        user.setFavoriteQuotes(likedQuotes);
+        userRepository.save(user);
+        return quote;
     }
 }
