@@ -123,8 +123,7 @@ public class User {
     @JoinTable(
             name = "users_have_friends",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private Set<User> friends;
 
     @ManyToMany

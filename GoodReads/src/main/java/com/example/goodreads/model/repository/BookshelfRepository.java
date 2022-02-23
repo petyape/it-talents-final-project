@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BookshelfRepository extends JpaRepository<Bookshelf, Long> {
-
+  
 }

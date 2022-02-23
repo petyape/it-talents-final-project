@@ -1,5 +1,7 @@
 package com.example.goodreads.controller;
 
+import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
+import com.example.goodreads.model.dto.bookDTO.BookShelfResponseDTO;
 import com.example.goodreads.model.dto.userDTO.*;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.services.UserService;
@@ -11,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 public class UserController extends BaseController {
@@ -48,7 +51,7 @@ public class UserController extends BaseController {
     @PutMapping("/user/edit/profile")
     public ResponseEntity<UserResponseDTO> editProfile(@RequestBody UserWithAddressDTO userEdited, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        User u = userService.editProfile(userEdited, (long)session.getAttribute(USER_ID));
+        User u = userService.editProfile(userEdited, (long) session.getAttribute(USER_ID));
         UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
         return ResponseEntity.ok(dto);
     }
@@ -56,7 +59,7 @@ public class UserController extends BaseController {
     @PutMapping("/user/edit/privacy")
     public ResponseEntity<UserResponseDTO> editPrivacy(@RequestBody UserWithPrivacyDTO userEdited, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        User u = userService.editPrivacy(userEdited, (long)session.getAttribute(USER_ID));
+        User u = userService.editPrivacy(userEdited, (long) session.getAttribute(USER_ID));
         UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
         return ResponseEntity.ok(dto);
     }
@@ -64,7 +67,7 @@ public class UserController extends BaseController {
     @PutMapping("/user/edit/password")
     public ResponseEntity<UserResponseDTO> changePassword(@RequestBody ChangePasswordDTO newPasswordUser, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        User u = userService.changePassword(newPasswordUser, (long)session.getAttribute(USER_ID));
+        User u = userService.changePassword(newPasswordUser, (long) session.getAttribute(USER_ID));
         UserResponseDTO dto = mapper.map(u, UserResponseDTO.class);
         return ResponseEntity.ok(dto);
     }
@@ -72,25 +75,34 @@ public class UserController extends BaseController {
     @PutMapping("/user/edit/photo")
     public String uploadPhoto(@RequestParam(name = "file") MultipartFile file, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        return userService.uploadFile(file, (long)session.getAttribute(USER_ID));
+        return userService.uploadFile(file, (long) session.getAttribute(USER_ID));
     }
 
     @PutMapping("/user/sign_out")
-    public ResponseEntity<UserResponseDTO> logout(HttpSession session, HttpServletRequest request){
+    public ResponseEntity<UserResponseDTO> logout(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         session.invalidate();
         return ResponseEntity.status(200).build();
     }
 
     @DeleteMapping("/user/destroy")
-    public ResponseEntity<String>  deleteAccount(HttpSession session, HttpServletRequest request){
+    public ResponseEntity<String> deleteAccount(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        String msg = userService.deleteUser((long)session.getAttribute(USER_ID));
+        String msg = userService.deleteUser((long) session.getAttribute(USER_ID));
         return ResponseEntity.ok(msg);
     }
 
+
+    @GetMapping("/user/bookshelves/{id}")
+    public ResponseEntity<List<BookResponseDTO>> getUserBookshelf(@PathVariable long id, HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
+        long userId = (long) session.getAttribute(USER_ID);
+        List<BookResponseDTO> dto = userService.getUserBookshelf(id, userId);
+        return ResponseEntity.ok(dto);
+    }
+
+
 //    public ResponseEntity<UserResponseDTO> getUser()
 //    @GetMapping("/user/ratings/")
-//    @GetMapping("/user/bookshelves/{shelf_id}")
-//    @GetMapping("/user/bookshelves/all")
+
 }

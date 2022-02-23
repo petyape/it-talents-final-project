@@ -84,6 +84,12 @@ Content-Type: application/json
   "password": "sanyAsevdev@22"
 }
 
+### getUsersReviews
+GET localhost:8484/user/reviews
+Content-Type: application/json
+
+
+
 ### register
 POST localhost:8484/users
 Content-Type: application/json
@@ -151,3 +157,6 @@ Content-Type: application/json
 
 ### edit
 PUT localhost:8484/test_table
+### editProfile
+PUT localhost:8484/user/edit/profile
+Content-Type: application/json
