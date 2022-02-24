@@ -1,7 +1,7 @@
 package com.example.goodreads.model.dto.messageDTO;
 
 import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 import lombok.*;
 
 @Setter
@@ -15,6 +15,6 @@ public class MessagesInboxDTO {
     private String receiverName;
     private String senderName;
     private String message;
-    private LocalDate sentAt;
+    private LocalDateTime sentAt;
 
 }

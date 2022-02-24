@@ -1,12 +1,9 @@
 package com.example.goodreads.model.dto.messageDTO;
 
 import com.example.goodreads.model.dto.userDTO.UserResponseDTO;
-import com.example.goodreads.model.entities.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter

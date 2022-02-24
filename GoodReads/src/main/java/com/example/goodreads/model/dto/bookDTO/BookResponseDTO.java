@@ -15,4 +15,5 @@ public class BookResponseDTO {
 
     private long bookId;
     private String title;
+
 }

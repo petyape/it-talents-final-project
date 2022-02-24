@@ -1,7 +1,6 @@
 package com.example.goodreads.model.dto.bookDTO;
 
 import lombok.*;
-
 import java.util.List;
 
 @Getter

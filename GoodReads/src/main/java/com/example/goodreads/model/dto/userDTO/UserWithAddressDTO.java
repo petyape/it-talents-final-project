@@ -3,7 +3,6 @@ package com.example.goodreads.model.dto.userDTO;
 import com.example.goodreads.model.entities.Address;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.services.util.Helper;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,4 +36,5 @@ public class UserWithAddressDTO {
                 Helper.Visibility.isValidVisibility(genderViewableBy) &&
                 Helper.Visibility.isValidVisibility(locationViewableBy) && address != null);
     }
+
 }

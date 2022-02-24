@@ -2,7 +2,6 @@ package com.example.goodreads.model.dto.bookDTO;
 
 import com.example.goodreads.model.dto.authorDTO.AuthorWithNameDTO;
 import java.time.LocalDate;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +25,12 @@ public class AddBookDTO {
     private AuthorWithNameDTO[] authorsWithName;
 
     public boolean isValid() {
-        return (title != null && !title.isBlank() && description != null && !description.isBlank() &&
-                (pages >= 10) && isbn != null && !isbn.isBlank() && originalTitle != null &&
-                !originalTitle.isBlank() && publishDate != null && genreId > 0 && languageId > 0 && authorsWithName != null);
+        return (title != null && !title.isBlank() &&
+                description != null && !description.isBlank() &&
+                (pages >= 10) && isbn != null && !isbn.isBlank() &&
+                originalTitle != null && !originalTitle.isBlank() &&
+                publishDate != null && genreId > 0 && languageId > 0 &&
+                authorsWithName != null);
     }
+
 }

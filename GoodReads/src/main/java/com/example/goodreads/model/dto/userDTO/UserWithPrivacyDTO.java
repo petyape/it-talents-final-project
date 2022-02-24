@@ -1,7 +1,6 @@
 package com.example.goodreads.model.dto.userDTO;
 
 import com.example.goodreads.model.entities.Privacy;
-import com.example.goodreads.model.entities.User;
 import com.example.goodreads.services.util.Helper;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,9 +15,11 @@ public class UserWithPrivacyDTO {
     private Privacy privacy;
 
     public boolean isValid() {
-        return (Helper.Visibility.isValidVisibility(privacy.getViewProfile()) && privacy.getCanNonFriendsFollow() != null &&
+        return (Helper.Visibility.isValidVisibility(privacy.getViewProfile()) &&
+                privacy.getCanNonFriendsFollow() != null &&
                 privacy.getCanNonFriendsComment() != null && privacy.getCanDisplayReviews() != null &&
                 privacy.getPrivateMessages() != null && privacy.getIsEmailVisible() != null &&
                 privacy.getAllowSearchByEmail() != null && privacy.getPromptToRecommendBooks() != null);
     }
+
 }

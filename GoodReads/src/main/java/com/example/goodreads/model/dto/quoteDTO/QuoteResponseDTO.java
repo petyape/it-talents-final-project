@@ -1,4 +1,5 @@
 package com.example.goodreads.model.dto.quoteDTO;
+
 import com.example.goodreads.model.dto.authorDTO.AuthorWithNameDTO;
 import lombok.*;
 import org.springframework.web.bind.annotation.ResponseBody;
