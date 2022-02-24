@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class MessageService {
         if(!receiver.getPrivacy().getPrivateMessages()) {
             throw new DeniedPermissionException("This user does not accept messages!");
         }
-        Message message = createMessage(msg, sender,receiver,LocalDate.now());
+        Message message = createMessage(msg, sender,receiver,LocalDateTime.now());
         sender.getMessagesSent().add(message);
         receiver.getMessagesReceived().add(message);
         return mapper.map(message, SentMessageDTO.class);
@@ -70,7 +71,7 @@ public class MessageService {
         return msgSentDTO;
     }
 
-    private Message createMessage(String msg, User sender, User receiver, LocalDate sentAt){
+    private Message createMessage(String msg, User sender, User receiver, LocalDateTime sentAt){
         if (msg == null || msg.isBlank()) {
             throw new BadRequestException("Message has no body!");
         }

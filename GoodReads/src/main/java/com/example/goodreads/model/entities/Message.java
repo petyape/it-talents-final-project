@@ -21,7 +21,7 @@ public class Message {
     private String message;
 
     @Column
-    private LocalDate sentAt;
+    private LocalDateTime sentAt;
 
     @ManyToOne
     @JoinColumn(name = "sender_id", referencedColumnName = "user_id")
