@@ -41,7 +41,8 @@ public class UserController extends BaseController {
         String email = user.getEmail();
         String password = user.getPassword();
         String firstName = user.getFirstName();
-        UserResponseDTO u = userService.register(email, password, firstName);
+        String confirmPassword = user.getConfirmPassword();
+        UserResponseDTO u = userService.register(email, password, firstName, confirmPassword);
         session.setAttribute(USER_ID, u.getId());
         session.setAttribute(LOGGED, true);
         session.setAttribute(LOGGED_FROM, request.getRemoteAddr());

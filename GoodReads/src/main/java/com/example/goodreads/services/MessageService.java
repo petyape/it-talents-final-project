@@ -27,18 +27,14 @@ public class MessageService {
     private UserRepository userRepository;
 
     public SentMessageDTO sendMessage(long receiverId, long senderId, String msg) {
-        User sender = userRepository.
-                findById(senderId).
-                orElseThrow(() -> (new NotFoundException("User not found!")));
-        User receiver = userRepository.
-                findById(receiverId).
-                orElseThrow(() -> (new NotFoundException("User not found!")));
+        User sender = userRepository.findById(senderId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        User receiver = userRepository.findById(receiverId).orElseThrow(() -> (new NotFoundException("User not found!")));
 
         if(senderId == receiverId){
             throw new DeniedPermissionException("Users cannot send messages to themselves!");
         }
         if(!receiver.getPrivacy().getPrivateMessages()) {
-            throw new DeniedPermissionException("This user does not accept messages!");
+            throw new DeniedPermissionException("Sorry, this person isn't accepting messages.");
         }
         Message message = createMessage(msg, sender,receiver,LocalDateTime.now());
         sender.getMessagesSent().add(message);

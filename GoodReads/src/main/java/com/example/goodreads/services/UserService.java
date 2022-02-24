@@ -21,6 +21,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -66,22 +67,25 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO register(String email, String password, String firstName) {
-        if (email == null || email.isBlank()) {
+    public UserResponseDTO register(String email, String password, String firstName, String confirmPassword) {
+        if (email.equals("null") || email.isBlank()) {
             throw new BadRequestException("Email address is mandatory!");
         }
         if (!Helper.isValidEmail(email)) {
             throw new BadRequestException("Invalid email address!");
         }
-        if (password == null || password.isBlank()) {
+        if (password.equals("null") || password.isBlank()) {
             throw new BadRequestException("Password is mandatory!");
+        }
+        if (!password.equals(confirmPassword)) {
+            throw new DeniedPermissionException("Confirmed password does not match the provided password!");
+        }
+        Helper.validatePassword(password);
+        if(firstName.equals("null") || firstName.isBlank()){
+            throw new BadRequestException("Name is mandatory!");
         }
         if (firstName.trim().length() < 2) {
             throw new BadRequestException("Name is too short!");
-        }
-        Helper.validatePassword(password);
-        if (userRepository.findByEmail(email) != null) {
-            throw new BadRequestException("User with this email already exists!");
         }
         if (userRepository.findByEmail(email) != null) {
             throw new BadRequestException("User with this email already exists!");
@@ -194,10 +198,13 @@ public class UserService {
     @Transactional
     public String deleteUser(long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        Optional<ReadingChallenge> opt = readingChallengeRepository.findReadingChallengeByUser(user);
+        if (opt.isPresent()) {
+            readingChallengeRepository.deleteByUser(user);
+        }
         userRepository.delete(user);
         addressRepository.deleteById(user.getAddress().getAddressId());
         privacyRepository.deleteById(user.getPrivacy().getPrivacyId());
-        readingChallengeRepository.deleteById(userId);
         return "Successfully deleted user with id " + user.getUserId() + ".";
     }
 

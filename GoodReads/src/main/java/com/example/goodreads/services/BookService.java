@@ -102,7 +102,9 @@ public class BookService {
         key.setBookId(book.getBookId());
         key.setUserId(userId);
         record.setId(key);
-        return mapper.map(usersBooksRepository.save(record), BookResponseDTO.class);
+        BookResponseDTO booksDTO = mapper.map(book, BookResponseDTO.class);
+        usersBooksRepository.save(record);
+        return booksDTO;
     }
 
     public List<SearchBookDTO> searchBooksByTitle(String searchWord) {

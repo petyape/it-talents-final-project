@@ -29,7 +29,7 @@ public class ReadingChallengeController extends BaseController {
     }
 
     @PutMapping("/challenge/quit")
-    public ResponseEntity<String> enterChallenge(HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<String> quitChallenge(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         String msg = challengeService.quitChallenge((long) session.getAttribute(USER_ID));
         return ResponseEntity.ok(msg);

@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface ReadingChallengeRepository extends JpaRepository<ReadingChallenge, Long> {
 
     Optional<ReadingChallenge> findReadingChallengeByUser(User user);
+    void deleteByUser(User user);
 
 }
