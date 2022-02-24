@@ -23,17 +23,18 @@ public class MessageController extends BaseController {
     @PostMapping("/messages/new")
     public ResponseEntity<SentMessageDTO> sendMessage(@RequestBody SendMessageDTO mail,
                                                       HttpSession session, HttpServletRequest request) {
+        long receiverId = mail.getReceiverId();
+        long senderId = (long) session.getAttribute(USER_ID);
         validateSession(session, request);
-        SentMessageDTO dto = messageService.sendMessage(mail.getReceiverId(),
-                        (long) session.getAttribute(USER_ID), mail.getMessage());
+        SentMessageDTO dto = messageService.sendMessage(receiverId, senderId, mail.getMessage());
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/messages/inbox")
     public ResponseEntity<List<MessagesInboxDTO>> getReceivedMessages(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        List<MessagesInboxDTO> messagesReceived = messageService
-                .getReceivedMessages((long) session.getAttribute(USER_ID));
+        long user = (long) session.getAttribute(USER_ID);
+        List<MessagesInboxDTO> messagesReceived = messageService.getReceivedMessages(user);
         return ResponseEntity.ok(messagesReceived);
     }
 
@@ -41,8 +42,8 @@ public class MessageController extends BaseController {
     @GetMapping("/messages/sent")
     public ResponseEntity<List<MessagesInboxDTO>> getSentMessages(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        List<MessagesInboxDTO> messagesSent = messageService
-                .getSentMessages((long) session.getAttribute(USER_ID));
+        long user = (long) session.getAttribute(USER_ID);
+        List<MessagesInboxDTO> messagesSent = messageService.getSentMessages(user);
         return ResponseEntity.ok(messagesSent);
     }
 
