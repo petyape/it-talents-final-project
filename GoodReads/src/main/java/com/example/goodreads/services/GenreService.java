@@ -2,9 +2,7 @@ package com.example.goodreads.services;
 
 import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.model.dto.genreDTO.GenreResponseDTO;
-import com.example.goodreads.model.dto.quoteDTO.QuoteResponseDTO;
 import com.example.goodreads.model.entities.Genre;
-import com.example.goodreads.model.entities.Quote;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.model.repository.GenreRepository;
 import com.example.goodreads.model.repository.UserRepository;
@@ -26,7 +24,7 @@ public class GenreService {
     @Autowired
     private ModelMapper mapper;
 
-    public Genre reactOnGenre(long genreId, long userId) {
+    public GenreResponseDTO reactOnGenre(long genreId, long userId) {
         Genre genre = genreRepository.findById(genreId).orElseThrow(() -> (new NotFoundException("Genre not found!")));
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
 
@@ -40,7 +38,7 @@ public class GenreService {
         }
         user.setFavoriteGenres(favouriteGenres);
         userRepository.save(user);
-        return genre;
+        return mapper.map(genre, GenreResponseDTO.class);
     }
 
     public List<GenreResponseDTO> getAllGenres() {

@@ -4,6 +4,8 @@ import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.model.dto.ratingDTO.UserRatingsResponseDTO;
 import com.example.goodreads.model.dto.reviewDTO.AddReviewDTO;
+import com.example.goodreads.model.dto.reviewDTO.ReviewResponseDTO;
+import com.example.goodreads.model.dto.reviewDTO.ReviewWithUserDTO;
 import com.example.goodreads.model.dto.reviewDTO.UserReviewsResponseDTO;
 import com.example.goodreads.model.entities.Book;
 import com.example.goodreads.model.entities.Rating;
@@ -33,7 +35,7 @@ public class ReviewService {
     @Autowired
     private ModelMapper mapper;
 
-    public Review addReview(AddReviewDTO reviewDTO, long userId) {
+    public ReviewResponseDTO addReview(AddReviewDTO reviewDTO, long userId) {
         if (reviewDTO == null) {
             throw new BadRequestException("Invalid parameters!");
         }
@@ -56,12 +58,21 @@ public class ReviewService {
             review.setReviewDate(LocalDate.now());
         }
         review.setReview(reviewDTO.getReview());
-        return reviewRepository.save(review);
+        ReviewResponseDTO dto = mapper.map(review, ReviewResponseDTO.class);
+        dto.setTitle(review.getBook().getTitle());
+        return dto;
     }
 
-    public List<Review> getBookReviews(long bookId) {
+    public List<ReviewWithUserDTO> getBookReviews(long bookId) {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> (new NotFoundException("Book not found!")));
-        return reviewRepository.findAllByBook(book);
+        List<Review> reviews = reviewRepository.findAllByBook(book);
+        List<ReviewWithUserDTO> responseList = new ArrayList<>();
+        reviews.forEach(r -> {
+            ReviewWithUserDTO dto = mapper.map(r, ReviewWithUserDTO.class);
+            dto.setName(r.getUser().getFirstName());
+            responseList.add(dto);
+        });
+        return responseList;
     }
 
     public List<UserReviewsResponseDTO> getUserReviews(long userId) {

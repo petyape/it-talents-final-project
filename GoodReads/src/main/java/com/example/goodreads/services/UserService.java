@@ -36,6 +36,8 @@ public class UserService {
     @Autowired
     private BookRepository bookRepository;
     @Autowired
+    private ReadingChallengeRepository readingChallengeRepository;
+    @Autowired
     private PrivacyService privacyService;
     @Autowired
     private AddressService addressService;
@@ -46,7 +48,7 @@ public class UserService {
 
     private static final String photosFolder = "profile_photos";
 
-    public User login(String email, String password) {
+    public UserResponseDTO login(String email, String password) {
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Email is mandatory!");
         }
@@ -60,11 +62,11 @@ public class UserService {
         if (!passwordEncoder.matches(password, u.getPassword())) {
             throw new UnauthorizedException("Wrong credentials!");
         }
-        return u;
+        return mapper.map(u, UserResponseDTO.class);
     }
 
     @Transactional
-    public User register(String email, String password, String firstName) {
+    public UserResponseDTO register(String email, String password, String firstName) {
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Email address is mandatory!");
         }
@@ -100,11 +102,11 @@ public class UserService {
                 .address(address)
                 .privacy(pr)
                 .isAdmin(false).build();
-        return userRepository.save(user);
+        return mapper.map(userRepository.save(user), UserResponseDTO.class);
     }
 
     @Transactional
-    public User editProfile(UserWithAddressDTO dto, long loggedUserId) {
+    public UserResponseDTO editProfile(UserWithAddressDTO dto, long loggedUserId) {
         if (dto == null) {
             throw new NullPointerException("No user provided!");
         }
@@ -136,12 +138,11 @@ public class UserService {
         user.setAboutMe(dto.getAboutMe());
         user.setAddress(dto.getAddress());
         addressRepository.save(user.getAddress());
-        userRepository.save(user);
-        return user;
+        return mapper.map(userRepository.save(user), UserResponseDTO.class);
     }
 
     @Transactional
-    public User editPrivacy(UserWithPrivacyDTO dto, long loggedUserId) {
+    public UserResponseDTO editPrivacy(UserWithPrivacyDTO dto, long loggedUserId) {
         if (dto == null) {
             throw new NullPointerException("No user provided!");
         }
@@ -155,10 +156,10 @@ public class UserService {
         }
         user.setPrivacy(dto.getPrivacy());
         privacyRepository.save(user.getPrivacy());
-        return userRepository.save(user);
+        return mapper.map(userRepository.save(user), UserResponseDTO.class);
     }
 
-    public User changePassword(ChangePasswordDTO dto, long loggedUserId) {
+    public UserResponseDTO changePassword(ChangePasswordDTO dto, long loggedUserId) {
         if (dto == null) {
             throw new NullPointerException("No user provided!");
         }
@@ -175,7 +176,7 @@ public class UserService {
         }
         Helper.validatePassword(dto.getNewPassword());
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-        return userRepository.save(user);
+        return mapper.map(userRepository.save(user), UserResponseDTO.class);
     }
 
     @SneakyThrows
@@ -198,6 +199,7 @@ public class UserService {
         userRepository.delete(user);
         addressRepository.deleteById(user.getAddress().getAddressId());
         privacyRepository.deleteById(user.getPrivacy().getPrivacyId());
+        readingChallengeRepository.deleteById(userId);
         return "Successfully deleted user with id " + user.getUserId() + ".";
     }
 

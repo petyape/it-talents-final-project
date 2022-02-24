@@ -45,73 +45,21 @@ public class BookService {
     @Autowired
     private ModelMapper mapper;
 
-    private static final String coversFolder = "cover_photos";
+    private static final String COVER_PHOTOS = "cover_photos";
 
     @SneakyThrows
     @Transactional
-    public Book addBook(String json, MultipartFile cover, long loggedUserId) {
-        if (cover == null) {
-            throw new BadRequestException("There is no book cover provided!");
-        }
-        if (json == null) {
-            throw new BadRequestException("There are no book properties provided!");
-        }
-        User user = userRepository.findById(loggedUserId).orElseThrow(() -> (new NotFoundException("User not found!")));
-        if (!user.getIsAdmin()) {
-            throw new DeniedPermissionException("Operation is not allowed!");
-        }
-        AddBookDTO dto = objMapper.readValue(json, AddBookDTO.class);
-        if (!dto.isValid()) {
-            throw new BadRequestException("Invalid book properties provided!");
-        }
-        if (bookRepository.findBookByISBN(dto.getIsbn()).isPresent()) {
-            throw new BadRequestException("A book with such ISBN already exists!");
-        }
-        Genre genre = genreRepository.findById(dto.getGenreId())
-                .orElseThrow(() -> (new NotFoundException("A genre with such ID does not exist!")));
-        Language language = languageRepository.findById(dto.getLanguageId())
-                .orElseThrow(() -> (new NotFoundException("A language with such ID does not exist!")));
-        Book b = Book.builder()
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .pages(dto.getPages())
-                .ISBN(dto.getIsbn())
-                .originalTitle(dto.getOriginalTitle())
-                .publishDate(dto.getPublishDate())
-                .publisher(dto.getPublisher())
-                .genre(genre)
-                .language(language)
-                .build();
-        AuthorWithNameDTO[] authors = dto.getAuthorsWithName();
-        Set<Author> bookAuthors = new HashSet<>();
-        for (AuthorWithNameDTO author : authors) {
-            if (author != null) {
-                Optional<Author> opt = authorRepository.findById(author.getAuthorId());
-                if (opt.isPresent() && opt.get().getAuthorName().equals(author.getAuthorName().trim())) {
-                    Author currentAuthor = opt.get();
-                    bookAuthors.add(currentAuthor);
-                } else {
-                    if (!author.getAuthorName().isBlank()) {
-                        Author newAuthor = new Author();
-                        newAuthor.setAuthorName(author.getAuthorName().trim());
-                        authorRepository.save(newAuthor);
-                        bookAuthors.add(newAuthor);
-                    }
-                }
-            }
-        }
-        b.setAuthors(bookAuthors);
-        String extension = FilenameUtils.getExtension(cover.getOriginalFilename());
-        String coverName = System.nanoTime() + "." + extension;
-        Files.copy(cover.getInputStream(), new File(coversFolder + File.separator + coverName).toPath());
-        b.setCoverUrl(coverName);
-        return bookRepository.save(b);
+    public BookResponseDTO addBook(String bookInfo, MultipartFile cover, long loggedUserId) {
+        Book b = addNewBook(bookInfo, cover, loggedUserId);
+        return mapper.map(b, BookResponseDTO.class);
     }
 
     @Transactional
-    public Book addEdition(long bookId, String json, MultipartFile cover, long loggedUserId) {
-        Book originalBook = bookRepository.findById(bookId).orElseThrow(() -> (new NotFoundException("Book not found!")));
-        Book newEdition = addBook(json, cover, loggedUserId);
+    public BookResponseDTO addEdition(long bookId, String bookInfo, MultipartFile cover, long loggedUserId) {
+        Book originalBook = bookRepository
+                .findById(bookId)
+                .orElseThrow(() -> (new NotFoundException("Book not found!")));
+        Book newEdition = addNewBook(bookInfo, cover, loggedUserId);
 
         // Create book-edition record in DB
         Set<Book> originalBookEditions = originalBook.getEditions();
@@ -126,11 +74,12 @@ public class BookService {
         Set<Book> editions = new HashSet<>();
         editions.add(originalBook);
         newEdition.setEditions(editions);
-        return bookRepository.save(newEdition);
+        bookRepository.save(newEdition);
+        return mapper.map(newEdition, BookResponseDTO.class);
     }
 
     @Transactional
-    public Book addToShelf(AddBookToShelfDTO bookDTO, long userId) {
+    public BookResponseDTO addToShelf(AddBookToShelfDTO bookDTO, long userId) {
         if (bookDTO == null) {
             throw new BadRequestException("Invalid parameters!");
         }
@@ -143,7 +92,7 @@ public class BookService {
         Optional<UsersBooks> opt = usersBooksRepository.findByBookAndUser(book, user);
         if (opt.isPresent()) {
             if (opt.get().getBookshelf() == bookshelf) {
-                return book;
+                return mapper.map(book, BookResponseDTO.class);
             }
             usersBooksRepository.deleteByBookAndUser(book, user);
         }
@@ -155,8 +104,7 @@ public class BookService {
         key.setBookId(book.getBookId());
         key.setUserId(userId);
         record.setId(key);
-        usersBooksRepository.save(record);
-        return book;
+        return mapper.map(usersBooksRepository.save(record), BookResponseDTO.class);
     }
 
     public List<SearchBookDTO> searchBooksByTitle(String searchWord) {
@@ -169,12 +117,6 @@ public class BookService {
         validateSearchWord(searchWord);
         List<Book> books = bookRepository.findBooksByAuthorNameLike("%" + searchWord + "%");
         return extractDTOList(books);
-    }
-
-    private void validateSearchWord(String searchWord) {
-        if (searchWord == null || searchWord.isBlank()) {
-            throw new BadRequestException("Invalid search parameters provided!");
-        }
     }
 
     public List<SearchBookDTO> searchBooksByGenre(long genreId) {
@@ -229,7 +171,7 @@ public class BookService {
     public File getCover(long bookId) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> (new NotFoundException("Book not found!")));
-        File f = new File(coversFolder + File.separator + book.getCoverUrl());
+        File f = new File(COVER_PHOTOS + File.separator + book.getCoverUrl());
         if(!f.exists()){
             throw new NotFoundException("Cover file does not exist");
         }
@@ -245,5 +187,71 @@ public class BookService {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> (new NotFoundException("Book not found!")));
         bookRepository.delete(book);
         return "Successfully deleted book with id " + book.getBookId() + ".";
+    }
+
+    @SneakyThrows
+    private Book addNewBook(String bookInfo, MultipartFile cover, long loggedUserId) {
+        if (cover == null) {
+            throw new BadRequestException("There is no book cover provided!");
+        }
+        if (bookInfo == null) {
+            throw new BadRequestException("There are no book properties provided!");
+        }
+        User user = userRepository.findById(loggedUserId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        if (!user.getIsAdmin()) {
+            throw new DeniedPermissionException("Operation is not allowed!");
+        }
+        AddBookDTO dto = objMapper.readValue(bookInfo, AddBookDTO.class);
+        if (!dto.isValid()) {
+            throw new BadRequestException("Invalid book properties provided!");
+        }
+        if (bookRepository.findBookByISBN(dto.getIsbn()).isPresent()) {
+            throw new BadRequestException("A book with such ISBN already exists!");
+        }
+        Genre genre = genreRepository.findById(dto.getGenreId())
+                .orElseThrow(() -> (new NotFoundException("A genre with such ID does not exist!")));
+        Language language = languageRepository.findById(dto.getLanguageId())
+                .orElseThrow(() -> (new NotFoundException("A language with such ID does not exist!")));
+        Book b = Book.builder()
+                .title(dto.getTitle())
+                .description(dto.getDescription())
+                .pages(dto.getPages())
+                .ISBN(dto.getIsbn())
+                .originalTitle(dto.getOriginalTitle())
+                .publishDate(dto.getPublishDate())
+                .publisher(dto.getPublisher())
+                .genre(genre)
+                .language(language)
+                .build();
+        AuthorWithNameDTO[] authors = dto.getAuthorsWithName();
+        Set<Author> bookAuthors = new HashSet<>();
+        for (AuthorWithNameDTO author : authors) {
+            if (author != null) {
+                Optional<Author> opt = authorRepository.findById(author.getAuthorId());
+                if (opt.isPresent() && opt.get().getAuthorName().equals(author.getAuthorName().trim())) {
+                    Author currentAuthor = opt.get();
+                    bookAuthors.add(currentAuthor);
+                } else {
+                    if (!author.getAuthorName().isBlank()) {
+                        Author newAuthor = new Author();
+                        newAuthor.setAuthorName(author.getAuthorName().trim());
+                        authorRepository.save(newAuthor);
+                        bookAuthors.add(newAuthor);
+                    }
+                }
+            }
+        }
+        b.setAuthors(bookAuthors);
+        String extension = FilenameUtils.getExtension(cover.getOriginalFilename());
+        String coverName = System.nanoTime() + "." + extension;
+        Files.copy(cover.getInputStream(), new File(COVER_PHOTOS + File.separator + coverName).toPath());
+        b.setCoverUrl(coverName);
+        return bookRepository.save(b);
+    }
+
+    private void validateSearchWord(String searchWord) {
+        if (searchWord == null || searchWord.isBlank()) {
+            throw new BadRequestException("Invalid search parameters provided!");
+        }
     }
 }

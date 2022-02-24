@@ -3,6 +3,7 @@ package com.example.goodreads.services;
 import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.model.dto.ratingDTO.RateBookDTO;
+import com.example.goodreads.model.dto.ratingDTO.RatingResponseDTO;
 import com.example.goodreads.model.dto.ratingDTO.RatingWithUserDTO;
 import com.example.goodreads.model.dto.ratingDTO.UserRatingsResponseDTO;
 import com.example.goodreads.model.entities.Book;
@@ -31,7 +32,7 @@ public class RatingService {
     @Autowired
     private ModelMapper mapper;
 
-    public Rating rateBook(RateBookDTO ratingDTO, long userId) {
+    public RatingResponseDTO rateBook(RateBookDTO ratingDTO, long userId) {
         if (ratingDTO == null) {
             throw new BadRequestException("Invalid parameters!");
         }
@@ -47,7 +48,7 @@ public class RatingService {
         if (opt.isPresent()) {
             rating = opt.get();
             if (rating.getRating() == ratingDTO.getRating()) {
-                return rating;
+                return mapper.map(rating, RatingResponseDTO.class);
             }
         }
         else {
@@ -56,7 +57,7 @@ public class RatingService {
             rating.setUser(user);
         }
         rating.setRating(ratingDTO.getRating());
-        return ratingRepository.save(rating);
+        return mapper.map(ratingRepository.save(rating), RatingResponseDTO.class);
     }
 
     public List<RatingWithUserDTO> getBookRatings(long bookId) {

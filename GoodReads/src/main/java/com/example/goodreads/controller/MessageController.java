@@ -45,4 +45,5 @@ public class MessageController extends BaseController {
                 .getSentMessages((long) session.getAttribute(USER_ID));
         return ResponseEntity.ok(messagesSent);
     }
+
 }

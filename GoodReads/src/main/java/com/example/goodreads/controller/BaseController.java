@@ -2,12 +2,12 @@ package com.example.goodreads.controller;
 
 import com.example.goodreads.exceptions.UnauthorizedException;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
 public abstract class BaseController {
+
     public static final String LOGGED = "logged";
     public static final String LOGGED_FROM = "logged_from";
     public static final String USER_ID = "user_id";
@@ -28,4 +28,5 @@ public abstract class BaseController {
             throw new UnauthorizedException("Invalid session! Please, login!");
         }
     }
+
 }

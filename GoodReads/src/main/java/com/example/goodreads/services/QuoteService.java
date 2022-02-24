@@ -33,7 +33,7 @@ public class QuoteService {
     private ModelMapper mapper;
 
     @Transactional
-    public Quote addQuote(AddQuoteDTO quoteDTO, long userId) {
+    public QuoteResponseDTO addQuote(AddQuoteDTO quoteDTO, long userId) {
         if (quoteDTO == null || quoteDTO.getQuote() == null || quoteDTO.getQuote().isBlank()) {
             throw new BadRequestException("Invalid quote parameters provided!");
         }
@@ -66,7 +66,7 @@ public class QuoteService {
                 }
             }
         }
-        return quoteRepository.save(quote);
+        return mapper.map(quoteRepository.save(quote), QuoteResponseDTO.class);
     }
 
     private Author addNewAuthor(String name) {
@@ -75,7 +75,7 @@ public class QuoteService {
         return authorRepository.save(newAuthor);
     }
 
-    public Quote reactOnQuote(long quoteId, long userId) {
+    public QuoteResponseDTO reactOnQuote(long quoteId, long userId) {
         Quote quote = quoteRepository.findById(quoteId).orElseThrow(() -> (new NotFoundException("Quote not found!")));
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
 
@@ -89,7 +89,7 @@ public class QuoteService {
         }
         user.setFavoriteQuotes(likedQuotes);
         userRepository.save(user);
-        return quote;
+        return mapper.map(quote, QuoteResponseDTO.class);
     }
 
     public List<QuoteResponseDTO> getAllQuotes() {

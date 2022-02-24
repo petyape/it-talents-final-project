@@ -2,6 +2,7 @@ package com.example.goodreads.services;
 
 import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.NotFoundException;
+import com.example.goodreads.model.dto.readingChallengeDTO.ChallengeResponseDTO;
 import com.example.goodreads.model.dto.readingChallengeDTO.EnterChallengeDTO;
 import com.example.goodreads.model.dto.readingChallengeDTO.ParticipantDTO;
 import com.example.goodreads.model.entities.ReadingChallenge;
@@ -24,7 +25,7 @@ public class ReadingChallengeService {
     @Autowired
     private ModelMapper mapper;
 
-    public ReadingChallenge enterChallenge(EnterChallengeDTO entryRequest, long userId) {
+    public ChallengeResponseDTO enterChallenge(EnterChallengeDTO entryRequest, long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         if (entryRequest.getBooksGoal() < 1) {
             throw new BadRequestException("Invalid books goal provided!");
@@ -38,7 +39,7 @@ public class ReadingChallengeService {
             entry.setUser(user);
         }
         entry.setBooksGoal(entryRequest.getBooksGoal());
-        return readingChallengeRepository.save(entry);
+        return mapper.map(readingChallengeRepository.save(entry), ChallengeResponseDTO.class);
     }
 
     public String quitChallenge(long userId) {
