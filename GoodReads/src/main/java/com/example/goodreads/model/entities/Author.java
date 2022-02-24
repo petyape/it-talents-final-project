@@ -1,13 +1,12 @@
 package com.example.goodreads.model.entities;
 
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.Set;
 
+@Data
 @Entity
 @Table(name = "authors")
-@Data
 public class Author {
 
     @Id
@@ -22,4 +21,5 @@ public class Author {
 
     @ManyToMany(mappedBy = "authors", fetch = FetchType.LAZY)
     private Set<Book> books;
+
 }

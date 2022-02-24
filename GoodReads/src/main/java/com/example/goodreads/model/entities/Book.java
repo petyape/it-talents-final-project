@@ -1,19 +1,19 @@
 package com.example.goodreads.model.entities;
 
 import lombok.*;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Entity
-@Table(name = "books")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "books")
 public class Book {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long bookId;
@@ -74,4 +74,5 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id"))
     private Set<Author> authors;
+
 }

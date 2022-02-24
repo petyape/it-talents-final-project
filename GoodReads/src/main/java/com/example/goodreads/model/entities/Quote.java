@@ -1,7 +1,6 @@
 package com.example.goodreads.model.entities;
 
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.Set;
 
@@ -34,4 +33,5 @@ public class Quote {
 
     @ManyToMany(mappedBy = "favoriteQuotes", fetch = FetchType.LAZY)
     private Set<User> likes;
+
 }

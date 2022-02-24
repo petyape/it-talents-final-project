@@ -1,15 +1,14 @@
 package com.example.goodreads.model.entities;
 
 import lombok.*;
-
 import javax.persistence.*;
 
-@Entity
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Table(name = "ratings")
 public class Rating {
 
@@ -27,4 +26,5 @@ public class Rating {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
 }

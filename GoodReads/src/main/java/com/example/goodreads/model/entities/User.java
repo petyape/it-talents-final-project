@@ -2,20 +2,20 @@ package com.example.goodreads.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Entity
-@Table(name = "users")
 @Getter
 @Setter
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
+
     public enum Gender{
         MALE('m'), FEMALE('f'), CUSTOM('c'), NONE('n');
 
@@ -139,4 +139,5 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "quote_id"))
     private Set<Quote> favoriteQuotes;
+
 }

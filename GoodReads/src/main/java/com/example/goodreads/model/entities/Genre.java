@@ -1,12 +1,11 @@
 package com.example.goodreads.model.entities;
 
 import lombok.Getter;
-
 import javax.persistence.*;
 import java.util.Set;
 
-@Entity
 @Getter
+@Entity
 @Table(name = "genres")
 public class Genre {
 
@@ -22,4 +21,5 @@ public class Genre {
 
     @ManyToMany(mappedBy = "favoriteGenres", fetch = FetchType.LAZY)
     private Set<User> likes;
+
 }

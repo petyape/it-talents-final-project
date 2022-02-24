@@ -1,17 +1,17 @@
 package com.example.goodreads.model.entities;
 
 import lombok.*;
-
 import javax.persistence.*;
 
-@Entity
-@Table(name = "privacy")
 @Builder
 @NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
+@Entity
+@Table(name = "privacy")
 public class Privacy {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long privacyId;
@@ -42,4 +42,5 @@ public class Privacy {
 
     @Column
     private Boolean promptToRecommendBooks;
+
 }

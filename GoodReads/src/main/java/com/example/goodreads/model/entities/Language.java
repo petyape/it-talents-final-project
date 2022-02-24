@@ -1,11 +1,11 @@
 package com.example.goodreads.model.entities;
-import lombok.Getter;
 
+import lombok.Getter;
 import javax.persistence.*;
 import java.util.Set;
 
-@Entity
 @Getter
+@Entity
 @Table(name = "languages")
 public class Language {
 
@@ -18,4 +18,5 @@ public class Language {
 
     @OneToMany(mappedBy = "language", fetch = FetchType.LAZY)
     private Set<Book> books;
+
 }

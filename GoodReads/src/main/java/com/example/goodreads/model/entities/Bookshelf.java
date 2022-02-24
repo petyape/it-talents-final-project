@@ -2,7 +2,6 @@ package com.example.goodreads.model.entities;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.Set;
 
@@ -21,4 +20,5 @@ public class Bookshelf {
 
     @OneToMany(mappedBy = "bookshelf", fetch = FetchType.LAZY)
     private Set<UsersBooks> booksPerUser;
+
 }

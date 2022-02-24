@@ -1,9 +1,8 @@
 package com.example.goodreads.model.entities;
 
 import lombok.*;
-
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
@@ -13,6 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Message {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long messageId;
@@ -30,4 +30,5 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "receiver_id", referencedColumnName = "user_id")
     private User receiver;
+
 }

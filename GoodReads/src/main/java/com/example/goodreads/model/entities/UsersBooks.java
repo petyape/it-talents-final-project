@@ -1,7 +1,6 @@
 package com.example.goodreads.model.entities;
 
 import lombok.*;
-
 import javax.persistence.*;
 
 @Data
@@ -24,4 +23,5 @@ public class UsersBooks {
     @ManyToOne
     @JoinColumn(name = "bookshelf_id")
     private Bookshelf bookshelf;
+
 }
