@@ -20,7 +20,7 @@ public class MessageController extends BaseController {
     @Autowired
     private MessageService messageService;
 
-    @PostMapping("/message/new")
+    @PostMapping("/messages/new")
     public ResponseEntity<SentMessageDTO> sendMessage(@RequestBody SendMessageDTO mail,
                                                       HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
@@ -29,7 +29,7 @@ public class MessageController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("/message/inbox")
+    @GetMapping("/messages/inbox")
     public ResponseEntity<List<MessagesInboxDTO>> getReceivedMessages(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         List<MessagesInboxDTO> messagesReceived = messageService
@@ -38,7 +38,7 @@ public class MessageController extends BaseController {
     }
 
 
-    @GetMapping("/message/sent")
+    @GetMapping("/messages/sent")
     public ResponseEntity<List<MessagesInboxDTO>> getSentMessages(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         List<MessagesInboxDTO> messagesSent = messageService

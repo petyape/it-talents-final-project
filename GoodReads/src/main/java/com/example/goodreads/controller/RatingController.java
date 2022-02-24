@@ -18,7 +18,7 @@ public class RatingController extends BaseController {
     @Autowired
     private RatingService ratingService;
 
-    @PostMapping("/book/rate")
+    @PostMapping("/books/rate")
     public ResponseEntity<RatingResponseDTO> rateBook(@RequestBody RateBookDTO ratingDTO,
                                                       HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
@@ -26,14 +26,14 @@ public class RatingController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("/book/ratings/{id}")
+    @GetMapping("/books/ratings/{id}")
     public ResponseEntity<List<RatingWithUserDTO>> getBookRatings(@PathVariable long id, HttpSession session) {
         validateSession(session);
         List<RatingWithUserDTO> responseList = ratingService.getBookRatings(id);
         return ResponseEntity.ok(responseList);
     }
 
-    @GetMapping("/user/ratings/{id}")
+    @GetMapping("/users/ratings/{id}")
     public ResponseEntity<List<UserRatingsResponseDTO>> getUserRatings(@PathVariable long id, HttpSession session) {
         validateSession(session);
         List<UserRatingsResponseDTO> responseList = ratingService.getUserRatings(id);

@@ -18,7 +18,7 @@ public class GenreController extends BaseController {
     @Autowired
     private GenreService genreService;
 
-    @PutMapping("/genre/react/{genre_id}")
+    @PutMapping("/genres/react/{genre_id}")
     public ResponseEntity<GenreResponseDTO> reactOnGenre(@PathVariable long genre_id,
                                                          HttpSession session, HttpServletRequest request) {
         validateSession(session, request);

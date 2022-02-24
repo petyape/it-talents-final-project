@@ -15,7 +15,7 @@ public class ReviewController extends BaseController {
     @Autowired
     private ReviewService reviewService;
 
-    @PostMapping("/book/add_review")
+    @PostMapping("/books/add_review")
     public ResponseEntity<ReviewResponseDTO> addReview(@RequestBody AddReviewDTO reviewDTO,
                                                        HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
@@ -23,14 +23,14 @@ public class ReviewController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("/book/reviews/{id}")
+    @GetMapping("/books/reviews/{id}")
     public ResponseEntity<List<ReviewWithUserDTO>> getBookReviews(@PathVariable long id, HttpSession session) {
         validateSession(session);
         List<ReviewWithUserDTO> responseList = reviewService.getBookReviews(id);
         return ResponseEntity.ok(responseList);
     }
 
-    @GetMapping("/user/reviews/{id}")
+    @GetMapping("/users/reviews/{id}")
     public ResponseEntity<List<UserReviewsResponseDTO>> getUserReviews(@PathVariable long id, HttpSession session, HttpServletRequest request) {
         validateSession(session);
         List<UserReviewsResponseDTO> responseList = reviewService.getUserReviews(id);

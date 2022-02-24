@@ -15,7 +15,7 @@ public class FriendshipController extends BaseController {
     @Autowired
     private FriendshipService friendshipService;
 
-    @PutMapping("/friend/add_friend/{friendId}")
+    @PutMapping("/friends/add/{friendId}")
     public ResponseEntity<String> addAsFriend (@PathVariable long friendId,
                                                HttpSession session, HttpServletRequest request){
         UserController.validateSession(session, request);
@@ -23,7 +23,7 @@ public class FriendshipController extends BaseController {
         return ResponseEntity.ok(msg);
     }
 
-    @PutMapping("/friend/remove_friend/{friendId}")
+    @PutMapping("/friends/remove/{friendId}")
     public ResponseEntity<String> removeFriend (@PathVariable long friendId,
                                                 HttpSession session, HttpServletRequest request){
         UserController.validateSession(session, request);
@@ -31,7 +31,7 @@ public class FriendshipController extends BaseController {
         return ResponseEntity.ok(msg);
     }
 
-    @GetMapping("/friend/show/{id}")
+    @GetMapping("/friends/show/{id}")
     public ResponseEntity<List<UserResponseDTO>> getFriends(@PathVariable long id,
                                                             HttpSession session, HttpServletRequest request){
         UserController.validateSession(session, request);

@@ -21,7 +21,7 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")
+    @PostMapping("users/login")
     @ResponseBody
     public ResponseEntity<UserResponseDTO> login(@RequestBody LoginUserDTO user,
                                                  HttpSession session, HttpServletRequest request) {
@@ -34,7 +34,7 @@ public class UserController extends BaseController {
         return ResponseEntity.ok(u);
     }
 
-    @PostMapping("/users")
+    @PostMapping("/users/register")
     public ResponseEntity<UserResponseDTO> register(@RequestBody RegisterUserDTO user,
                                                     HttpSession session, HttpServletRequest request) {
         String email = user.getEmail();
@@ -47,7 +47,7 @@ public class UserController extends BaseController {
         return ResponseEntity.ok(u);
     }
 
-    @PutMapping("/user/edit/profile")
+    @PutMapping("/users/edit/profile")
     public ResponseEntity<UserResponseDTO> editProfile(@RequestBody UserWithAddressDTO userEdited,
                                                        HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
@@ -55,7 +55,7 @@ public class UserController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/user/edit/privacy")
+    @PutMapping("/users/edit/privacy")
     public ResponseEntity<UserResponseDTO> editPrivacy(@RequestBody UserWithPrivacyDTO userEdited,
                                                        HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
@@ -63,7 +63,7 @@ public class UserController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/user/edit/password")
+    @PutMapping("/users/edit/password")
     public ResponseEntity<UserResponseDTO> changePassword(@RequestBody ChangePasswordDTO newPasswordUser,
                                                           HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
@@ -71,37 +71,37 @@ public class UserController extends BaseController {
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/user/edit/photo")
+    @PutMapping("/users/edit/photo")
     public String uploadPhoto(@RequestParam(name = "file") MultipartFile file,
                               HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         return userService.uploadFile(file, (long) session.getAttribute(USER_ID));
     }
 
-    @PutMapping("/user/sign_out")
+    @PutMapping("/users/sign_out")
     public ResponseEntity<UserResponseDTO> logout(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         session.invalidate();
         return ResponseEntity.status(200).build();
     }
 
-    @DeleteMapping("/user/destroy")
+    @DeleteMapping("/users/destroy")
     public ResponseEntity<String> deleteAccount(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         String msg = userService.deleteUser((long) session.getAttribute(USER_ID));
         return ResponseEntity.ok(msg);
     }
 
-    @GetMapping("/user/bookshelves/{id}")
-    public ResponseEntity<List<BookResponseDTO>> getUserBookshelf(@PathVariable long id,
+    @GetMapping("/users/bookshelves/{bookshelf_id}")
+    public ResponseEntity<List<BookResponseDTO>> getUserBookshelf(@PathVariable(name = "bookshelf_id") long bookshelfId,
                                                                   HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         long userId = (long) session.getAttribute(USER_ID);
-        List<BookResponseDTO> dto = userService.getUserBookshelf(id, userId);
+        List<BookResponseDTO> dto = userService.getUserBookshelf(bookshelfId, userId);
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("user/show/{id}")
+    @GetMapping("users/show/{id}")
     public ResponseEntity<GetUserDTO> getUser(@PathVariable long id, HttpSession session) {
         validateSession(session);
         GetUserDTO userDTO = userService.getUser(id, (long) session.getAttribute(USER_ID));
@@ -109,7 +109,7 @@ public class UserController extends BaseController {
     }
 
     @SneakyThrows
-    @GetMapping("/user/photo/{id}")
+    @GetMapping("/users/photo/{id}")
     public void getPhoto(@PathVariable long id, HttpSession session, HttpServletResponse response) {
         validateSession(session);
         File photo = userService.getPhoto(id);

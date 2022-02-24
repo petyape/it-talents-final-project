@@ -54,7 +54,7 @@ public class QuoteController extends BaseController {
         return ResponseEntity.ok(dtoList);
     }
 
-    @DeleteMapping("quote/delete/{id}")
+    @DeleteMapping("quotes/delete/{id}")
     public ResponseEntity<String> deleteQuote(@PathVariable long id, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         String message = quoteService.deleteQuote(id, (long) session.getAttribute(USER_ID));
