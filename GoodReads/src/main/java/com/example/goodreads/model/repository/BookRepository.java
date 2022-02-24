@@ -5,7 +5,6 @@ import com.example.goodreads.model.entities.Genre;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +26,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             nativeQuery = true)
     List<Book> findBooksByAuthorNameLike(String searchWord);
 
-
     @Query(value = "SELECT * FROM books AS b " +
             "JOIN users_have_books AS uhb " +
             "ON (uhb.book_id = b.book_id) " +
@@ -40,11 +38,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             nativeQuery = true)
     List<Book> findBooksByUserIdAndBookshelfId(long userId, long bookshelfId);
 
-
     @Query(value = "SELECT count(book_id) " +
             "FROM users_have_books " +
             "WHERE (bookshelf_id = ?1) " +
             "AND (user_id = ?2)",
             nativeQuery = true)
     long countBookByBookshelfIdAndUserId(long bookshelf_id, long user_id);
+
 }
