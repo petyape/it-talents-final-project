@@ -10,10 +10,12 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "books")
 public class Book {
 
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long bookId;
@@ -59,14 +61,12 @@ public class Book {
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     private Set<UsersBooks> booksPerUser;
 
-    @ManyToMany(cascade={CascadeType.ALL})
-    @JoinTable(name="books_have_editions",
-            joinColumns={@JoinColumn(name="book_id")},
-            inverseJoinColumns={@JoinColumn(name="edition_id")})
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "books_have_editions",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "edition_id"))
     private Set<Book> editions;
-
-    @ManyToMany(mappedBy="editions", fetch = FetchType.LAZY)
-    private Set<Book> bookEditions;
 
     @ManyToMany
     @JoinTable(

@@ -67,14 +67,12 @@ public class BookService {
             originalBookEditions = new HashSet<>();
         }
         originalBookEditions.add(newEdition);
-        originalBook.setEditions(originalBookEditions);
-        bookRepository.save(originalBook);
 
         // Create edition-book record in DB
         Set<Book> editions = new HashSet<>();
         editions.add(originalBook);
         newEdition.setEditions(editions);
-        bookRepository.save(newEdition);
+
         return mapper.map(newEdition, BookResponseDTO.class);
     }
 

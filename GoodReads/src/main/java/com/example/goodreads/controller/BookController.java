@@ -34,7 +34,7 @@ public class BookController extends BaseController {
 
     @PostMapping("/book/add_edition/{book_id}")
     public ResponseEntity<BookResponseDTO> addEdition(@PathVariable long book_id,
-                                                      @RequestParam(name = "bookInfo") String bookInfo,
+                                                      @RequestParam(name = "book_info") String bookInfo,
                                                       @RequestParam(name = "cover") MultipartFile cover,
                                                       HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
