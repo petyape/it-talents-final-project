@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Service
 public class ReadingChallengeService {
+
     @Autowired
     private ReadingChallengeRepository readingChallengeRepository;
     @Autowired
@@ -62,4 +63,5 @@ public class ReadingChallengeService {
         }
         return dtoList;
     }
+
 }

@@ -81,7 +81,7 @@ public class BookService {
     @Transactional
     public BookResponseDTO addToShelf(AddBookToShelfDTO bookDTO, long userId) {
         if (bookDTO == null) {
-            throw new BadRequestException("Invalid parameters!");
+            throw new BadRequestException("Parameters cannot be null!");
         }
         Book book = bookRepository.findById(bookDTO.getBookId())
                 .orElseThrow(() -> (new NotFoundException("Book not found!")));
@@ -254,4 +254,5 @@ public class BookService {
             throw new BadRequestException("Invalid search parameters provided!");
         }
     }
+
 }

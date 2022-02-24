@@ -4,6 +4,7 @@ import com.example.goodreads.exceptions.BadRequestException;
 import org.apache.commons.validator.routines.EmailValidator;
 
 public class Helper {
+
     public enum Visibility{EVERYONE('e'), FRIENDS('f'), NONE('n');
 
         public final char symbol;

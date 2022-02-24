@@ -2,13 +2,11 @@ package com.example.goodreads.services;
 
 import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.NotFoundException;
-import com.example.goodreads.model.dto.ratingDTO.UserRatingsResponseDTO;
 import com.example.goodreads.model.dto.reviewDTO.AddReviewDTO;
 import com.example.goodreads.model.dto.reviewDTO.ReviewResponseDTO;
 import com.example.goodreads.model.dto.reviewDTO.ReviewWithUserDTO;
 import com.example.goodreads.model.dto.reviewDTO.UserReviewsResponseDTO;
 import com.example.goodreads.model.entities.Book;
-import com.example.goodreads.model.entities.Rating;
 import com.example.goodreads.model.entities.Review;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.model.repository.BookRepository;
@@ -17,7 +15,6 @@ import com.example.goodreads.model.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

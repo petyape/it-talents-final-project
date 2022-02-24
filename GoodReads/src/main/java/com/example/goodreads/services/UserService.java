@@ -46,7 +46,7 @@ public class UserService {
     @Autowired
     private ModelMapper mapper;
 
-    private static final String photosFolder = "profile_photos";
+    private static final String PROFILE_PHOTOS = "profile_photos";
 
     public UserResponseDTO login(String email, String password) {
         if (email == null || email.isBlank()) {
@@ -87,9 +87,7 @@ public class UserService {
             throw new BadRequestException("User with this email already exists!");
         }
         Privacy pr = privacyService.createDefaultPrivacy();
-
         Address address = addressService.createDefaultAddress();
-
         User user = User.builder()
                 .firstName(firstName)
                 .email(email)
@@ -203,7 +201,6 @@ public class UserService {
         return "Successfully deleted user with id " + user.getUserId() + ".";
     }
 
-
     public List<BookResponseDTO> getUserBookshelf(long id, long userId) {
         User user = userRepository
                 .findById(userId)
@@ -219,7 +216,6 @@ public class UserService {
         });
         return booksPerUserDTO;
     }
-
 
     public GetUserDTO getUser(long userId, long loggedUserId) {
         User user = userRepository
@@ -272,10 +268,11 @@ public class UserService {
     public File getPhoto(long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> (new NotFoundException("User not found!")));
-        File f = new File(photosFolder + File.separator + user.getPhotoUrl());
+        File f = new File(PROFILE_PHOTOS + File.separator + user.getPhotoUrl());
         if(!f.exists()){
             throw new NotFoundException("Profile photo does not exist");
         }
         return f;
     }
+
 }

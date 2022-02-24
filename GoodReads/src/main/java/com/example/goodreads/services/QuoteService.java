@@ -130,4 +130,5 @@ public class QuoteService {
         quoteRepository.delete(quote);
         return "Successfully deleted quote with id " + quote.getQuoteId() + ".";
     }
+
 }

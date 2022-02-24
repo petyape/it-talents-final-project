@@ -11,8 +11,9 @@ public class AddressService {
     @Autowired
     private AddressRepository addressRepository;
 
-    public Address createDefaultAddress(){
+    public Address createDefaultAddress() {
         Address address = Address.builder().build();
         return addressRepository.save(address);
     }
+
 }
