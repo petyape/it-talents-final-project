@@ -1,5 +1,6 @@
 package com.example.goodreads.model.dto.messageDTO;
 
+import com.example.goodreads.model.dto.userDTO.UserResponseDTO;
 import com.example.goodreads.model.entities.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +13,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class SentMessageDTO {
 
+    private int messageId;
     private LocalDate sentAt;
-    private User sender;
-    private User receiver;
+    private UserResponseDTO sender;
+    private UserResponseDTO receiver;
     private String message;
 
 }

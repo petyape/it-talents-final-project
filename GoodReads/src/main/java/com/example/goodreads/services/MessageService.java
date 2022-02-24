@@ -1,41 +1,49 @@
 package com.example.goodreads.services;
 
+import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.DeniedPermissionException;
 import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.model.dto.messageDTO.MessagesInboxDTO;
+import com.example.goodreads.model.dto.messageDTO.SentMessageDTO;
 import com.example.goodreads.model.entities.Message;
 import com.example.goodreads.model.entities.User;
 import com.example.goodreads.model.repository.MessageRepository;
 import com.example.goodreads.model.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class MessageService {
+
     @Autowired
     private MessageRepository messageRepository;
-
+    @Autowired
+    private ModelMapper mapper;
     @Autowired
     private UserRepository userRepository;
 
-    public Message sendMassage(long receiverId, long senderId, String msg) {
-        User sender = userRepository.findById(senderId).orElseThrow(() -> (new NotFoundException("User not found!")));
-        User receiver = userRepository.findById(receiverId).orElseThrow(() -> (new NotFoundException("User not found!")));
-        if(senderId == receiverId){
-            throw new DeniedPermissionException("Sorry, you can't send messages to yourself.");
+    public SentMessageDTO sendMessage(long receiverId, long senderId, String msg) {
+        User sender = userRepository.
+                findById(senderId).
+                orElseThrow(() -> (new NotFoundException("User not found!")));
+        User receiver = userRepository.
+                findById(receiverId).
+                orElseThrow(() -> (new NotFoundException("User not found!")));
 
+        if(senderId == receiverId){
+            throw new DeniedPermissionException("Users cannot send messages to themselves!");
         }
         if(!receiver.getPrivacy().getPrivateMessages()) {
-            throw new DeniedPermissionException("Sorry, this person isn't accepting messages.");
+            throw new DeniedPermissionException("This user does not accept messages!");
         }
         Message message = createMessage(msg, sender,receiver,LocalDate.now());
         sender.getMessagesSent().add(message);
         receiver.getMessagesReceived().add(message);
-        return message;
+        return mapper.map(message, SentMessageDTO.class);
     }
 
     public List<MessagesInboxDTO> getReceivedMessages(long userId){
@@ -62,12 +70,15 @@ public class MessageService {
         return msgSentDTO;
     }
 
-    private Message createMessage(String msg, User sender, User receiver, LocalDate sendAt){
+    private Message createMessage(String msg, User sender, User receiver, LocalDate sentAt){
+        if (msg == null || msg.isBlank()) {
+            throw new BadRequestException("Message has no body!");
+        }
         Message message = Message.builder()
                 .message(msg)
                 .sender(sender)
                 .receiver(receiver)
-                .sentAt(sendAt).build();
+                .sentAt(sentAt).build();
         return messageRepository.save(message);
     }
 }

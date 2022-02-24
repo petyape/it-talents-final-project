@@ -7,8 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SendingMsgDTO {
+public class SendMessageDTO {
 
     private long receiverId;
-    private String msg;
+    private String message;
+
 }
