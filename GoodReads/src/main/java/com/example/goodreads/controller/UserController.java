@@ -3,6 +3,7 @@ package com.example.goodreads.controller;
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
 import com.example.goodreads.model.dto.userDTO.*;
 import com.example.goodreads.services.UserService;
+import com.example.goodreads.services.util.Helper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("users/login")
+    @PostMapping("/users/login")
     @ResponseBody
     public ResponseEntity<UserResponseDTO> login(@RequestBody LoginUserDTO user,
                                                  HttpSession session, HttpServletRequest request) {
@@ -75,6 +76,7 @@ public class UserController extends BaseController {
     public String uploadPhoto(@RequestParam(name = "file") MultipartFile file,
                               HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
+        Helper.validateFile(file);
         return userService.uploadFile(file, (long) session.getAttribute(USER_ID));
     }
 

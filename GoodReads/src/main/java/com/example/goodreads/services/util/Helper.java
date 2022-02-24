@@ -1,7 +1,9 @@
 package com.example.goodreads.services.util;
 
 import com.example.goodreads.exceptions.BadRequestException;
+import com.example.goodreads.exceptions.FileNotAllowedException;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.web.multipart.MultipartFile;
 
 public class Helper {
 
@@ -49,6 +51,20 @@ public class Helper {
             }
         }
         return counter;
+    }
+
+    public static void validateFile(MultipartFile multipartFile) {
+        boolean result = true;
+        String contentType = multipartFile.getContentType();
+        if (contentType == null || !isSupportedContentType(contentType)) {
+            throw new FileNotAllowedException("Only PNG, JPG or JPEG images allowed!");
+        }
+    }
+
+    private static boolean isSupportedContentType(String contentType) {
+        return contentType.equals("image/png")
+                || contentType.equals("image/jpg")
+                || contentType.equals("image/jpeg");
     }
 
 }

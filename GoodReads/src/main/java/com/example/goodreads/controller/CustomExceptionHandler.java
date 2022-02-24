@@ -1,15 +1,13 @@
 package com.example.goodreads.controller;
 
-import com.example.goodreads.exceptions.BadRequestException;
-import com.example.goodreads.exceptions.DeniedPermissionException;
-import com.example.goodreads.exceptions.NotFoundException;
-import com.example.goodreads.exceptions.UnauthorizedException;
+import com.example.goodreads.exceptions.*;
 import com.example.goodreads.model.dto.ErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
@@ -52,6 +50,26 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorDTO dto = new ErrorDTO();
         dto.setMsg(e.getMessage());
         dto.setStatus(HttpStatus.NOT_FOUND.value());
+        return dto;
+    }
+
+    @ExceptionHandler(value ={FileNotAllowedException.class})
+    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+    @ResponseBody
+    public ErrorDTO handleFileNotAllowed(Exception e){
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMsg(e.getMessage());
+        dto.setStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
+        return dto;
+    }
+
+    @ExceptionHandler(value ={MaxUploadSizeExceededException.class})
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+    @ResponseBody
+    public ErrorDTO handleMaxUploadSizeExceeded(MaxUploadSizeExceededException e){
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMsg("File is too big!");
+        dto.setStatus(HttpStatus.PAYLOAD_TOO_LARGE.value());
         return dto;
     }
 

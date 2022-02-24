@@ -5,6 +5,7 @@ import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
 import com.example.goodreads.model.dto.bookDTO.GetBookDTO;
 import com.example.goodreads.model.dto.bookDTO.SearchBookDTO;
 import com.example.goodreads.services.BookService;
+import com.example.goodreads.services.util.Helper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +25,11 @@ public class BookController extends BaseController {
     private BookService bookService;
 
     @PostMapping("/books/add")
-    public ResponseEntity<BookResponseDTO> addBook(@RequestParam(name = "bookInfo") String bookInfo,
+    public ResponseEntity<BookResponseDTO> addBook(@RequestParam(name = "book_info") String bookInfo,
                                                    @RequestParam(name = "cover") MultipartFile cover,
                                                    HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
+        Helper.validateFile(cover);
         BookResponseDTO dto = bookService.addBook(bookInfo, cover, (long)session.getAttribute(USER_ID));
         return ResponseEntity.ok(dto);
     }
@@ -38,6 +40,7 @@ public class BookController extends BaseController {
                                                       @RequestParam(name = "cover") MultipartFile cover,
                                                       HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
+        Helper.validateFile(cover);
         BookResponseDTO dto = bookService.addEdition(book_id, bookInfo, cover, (long)session.getAttribute(USER_ID));
         return ResponseEntity.ok(dto);
     }
