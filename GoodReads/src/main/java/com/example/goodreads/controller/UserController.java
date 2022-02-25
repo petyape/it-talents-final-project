@@ -1,5 +1,6 @@
 package com.example.goodreads.controller;
 
+import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
 import com.example.goodreads.model.dto.userDTO.*;
 import com.example.goodreads.services.UserService;
@@ -26,6 +27,9 @@ public class UserController extends BaseController {
     @ResponseBody
     public ResponseEntity<UserResponseDTO> login(@RequestBody LoginUserDTO user,
                                                  HttpSession session, HttpServletRequest request) {
+        if (user == null) {
+            throw new BadRequestException("Invalid request parameters!");
+        }
         String email = user.getEmail();
         String pass = user.getPassword();
         UserResponseDTO u = userService.login(email, pass);
@@ -38,6 +42,9 @@ public class UserController extends BaseController {
     @PostMapping("/users/register")
     public ResponseEntity<UserResponseDTO> register(@RequestBody RegisterUserDTO user,
                                                     HttpSession session, HttpServletRequest request) {
+        if (user == null) {
+            throw new BadRequestException("Invalid request parameters!");
+        }
         String email = user.getEmail();
         String password = user.getPassword();
         String firstName = user.getFirstName();

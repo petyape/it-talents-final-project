@@ -1,5 +1,6 @@
 package com.example.goodreads.controller;
 
+import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
 import com.example.goodreads.model.dto.bookDTO.GetBookDTO;
@@ -55,6 +56,9 @@ public class BookController extends BaseController {
 
     @GetMapping("/search/by_title/{title}")
     public ResponseEntity<List<SearchBookDTO>> searchBooksByTitle(@PathVariable String title, HttpSession session) {
+        if (title == null || title.isBlank()) {
+            throw new BadRequestException("Missing keyword!");
+        }
         validateSession(session);
         List<SearchBookDTO> responseList = bookService.searchBooksByTitle(title);
         return ResponseEntity.ok(responseList);
@@ -62,6 +66,9 @@ public class BookController extends BaseController {
 
     @GetMapping("/search/by_author/{author}")
     public ResponseEntity<List<SearchBookDTO>> searchBooksByAuthor(@PathVariable String author, HttpSession session) {
+        if (author == null || author.isBlank()) {
+            throw new BadRequestException("Missing keyword!");
+        }
         validateSession(session);
         List<SearchBookDTO> responseList = bookService.searchBooksByAuthor(author);
         return ResponseEntity.ok(responseList);
