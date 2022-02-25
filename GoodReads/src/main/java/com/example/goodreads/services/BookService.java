@@ -37,10 +37,6 @@ public class BookService {
     @Autowired
     private UsersBooksRepository usersBooksRepository;
     @Autowired
-    private RatingRepository ratingRepository;
-    @Autowired
-    private ReviewRepository reviewRepository;
-    @Autowired
     private ObjectMapper objMapper;
     @Autowired
     private ModelMapper mapper;
