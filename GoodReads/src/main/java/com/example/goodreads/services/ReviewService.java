@@ -55,7 +55,7 @@ public class ReviewService {
             review.setReviewDate(LocalDate.now());
         }
         review.setReview(reviewDTO.getReview());
-        ReviewResponseDTO dto = mapper.map(review, ReviewResponseDTO.class);
+        ReviewResponseDTO dto = mapper.map(reviewRepository.save(review), ReviewResponseDTO.class);
         dto.setTitle(review.getBook().getTitle());
         return dto;
     }
