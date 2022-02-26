@@ -9,6 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class PageDTO {
+    public static final int maxElementsOnPage = 10;
 
     private int pageNumber;
     private int totalPages;

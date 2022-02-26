@@ -1,6 +1,7 @@
 package com.example.goodreads.controller;
 
 import com.example.goodreads.exceptions.BadRequestException;
+import com.example.goodreads.model.dto.PageDTO;
 import com.example.goodreads.model.dto.bookDTO.AddBookToShelfDTO;
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
 import com.example.goodreads.model.dto.bookDTO.GetBookDTO;
@@ -55,30 +56,36 @@ public class BookController extends BaseController {
     }
 
     @GetMapping("/search/by_title/{title}")
-    public ResponseEntity<List<SearchBookDTO>> searchBooksByTitle(@PathVariable String title, HttpSession session) {
+    public ResponseEntity<PageDTO> searchBooksByTitle(@RequestParam int page,
+                                                                  @PathVariable String title, HttpSession session) {
         if (title == null || title.isBlank()) {
             throw new BadRequestException("Missing keyword!");
         }
+        Helper.validatePage(page);
         validateSession(session);
         List<SearchBookDTO> responseList = bookService.searchBooksByTitle(title);
-        return ResponseEntity.ok(responseList);
+        return ResponseEntity.ok(Helper.createPage(responseList, page));
     }
 
     @GetMapping("/search/by_author/{author}")
-    public ResponseEntity<List<SearchBookDTO>> searchBooksByAuthor(@PathVariable String author, HttpSession session) {
+    public ResponseEntity<PageDTO> searchBooksByAuthor(@RequestParam int page,
+                                                       @PathVariable String author, HttpSession session) {
         if (author == null || author.isBlank()) {
             throw new BadRequestException("Missing keyword!");
         }
+        Helper.validatePage(page);
         validateSession(session);
         List<SearchBookDTO> responseList = bookService.searchBooksByAuthor(author);
-        return ResponseEntity.ok(responseList);
+        return ResponseEntity.ok(Helper.createPage(responseList, page));
     }
 
     @GetMapping("/search/by_genre/{id}")
-    public ResponseEntity<List<SearchBookDTO>> searchBooksByGenre(@PathVariable long id, HttpSession session) {
+    public ResponseEntity<PageDTO> searchBooksByGenre(@RequestParam int page,
+                                                                  @PathVariable long id, HttpSession session) {
+        Helper.validatePage(page);
         validateSession(session);
         List<SearchBookDTO> responseList = bookService.searchBooksByGenre(id);
-        return ResponseEntity.ok(responseList);
+        return ResponseEntity.ok(Helper.createPage(responseList, page));
     }
 
     @SneakyThrows

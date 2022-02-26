@@ -2,42 +2,50 @@ package com.example.goodreads.controller;
 
 import com.example.goodreads.exceptions.*;
 import com.example.goodreads.model.dto.ErrorDTO;
-import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingPathVariableException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value ={ConstraintViolationException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ErrorDTO handleConstraintViolation(Exception e){
-        ErrorDTO dto = new ErrorDTO();
-        dto.setMsg("Invalid request parameters!");
-        dto.setStatus(HttpStatus.BAD_REQUEST.value());
-        return dto;
+    @Override
+    protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers,
+                                                               HttpStatus status, WebRequest request) {
+
+        String msg = "Required path variable '" + ex.getVariableName() + "' is missing!";
+        return new ResponseEntity<>(new ErrorDTO(msg, 400), HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler(value ={MethodArgumentNotValidException.class})
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ResponseBody
-//    public ErrorDTO handleMethodArgumentNotValid(Exception e){
-//        ErrorDTO dto = new ErrorDTO();
-//        dto.setMsg("Invalid request parameters!");
-//        dto.setStatus(HttpStatus.BAD_REQUEST.value());
-//        return dto;
-//    }
+    @Override
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
+                                                                          HttpHeaders headers, HttpStatus status,
+                                                                          WebRequest request) {
+        String msg = "Required request parameter '" + ex.getParameterName() + "' is missing!";
+        return new ResponseEntity<>(new ErrorDTO(msg, 400), HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers,
+                                                        HttpStatus status, WebRequest request) {
+        String msg = "Required type '" + ex.getRequiredType() + "' mismatched!";
+        return new ResponseEntity<>(new ErrorDTO(msg, 400), HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(value ={UnauthorizedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
-    public ErrorDTO handleUnauthorized(Exception e){
+    public ErrorDTO handleUnauthorized(UnauthorizedException e){
         ErrorDTO dto = new ErrorDTO();
         dto.setMsg(e.getMessage());
         dto.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -47,7 +55,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value ={BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorDTO handleBadRequest(Exception e){
+    public ErrorDTO handleBadRequest(BadRequestException e){
         ErrorDTO dto = new ErrorDTO();
         dto.setMsg(e.getMessage());
         dto.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -57,7 +65,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value ={DeniedPermissionException.class})
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ResponseBody
-    public ErrorDTO handleDeniedPermission(Exception e){
+    public ErrorDTO handleDeniedPermission(DeniedPermissionException e){
         ErrorDTO dto = new ErrorDTO();
         dto.setMsg(e.getMessage());
         dto.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
@@ -67,7 +75,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value ={NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ErrorDTO handleNotFound(Exception e){
+    public ErrorDTO handleNotFound(NotFoundException e){
         ErrorDTO dto = new ErrorDTO();
         dto.setMsg(e.getMessage());
         dto.setStatus(HttpStatus.NOT_FOUND.value());
@@ -77,7 +85,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value ={FileNotAllowedException.class})
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ResponseBody
-    public ErrorDTO handleFileNotAllowed(Exception e){
+    public ErrorDTO handleFileNotAllowed(FileNotAllowedException e){
         ErrorDTO dto = new ErrorDTO();
         dto.setMsg(e.getMessage());
         dto.setStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());

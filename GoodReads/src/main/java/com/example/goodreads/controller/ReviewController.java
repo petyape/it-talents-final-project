@@ -1,7 +1,9 @@
 package com.example.goodreads.controller;
 
+import com.example.goodreads.model.dto.PageDTO;
 import com.example.goodreads.model.dto.reviewDTO.*;
 import com.example.goodreads.services.ReviewService;
+import com.example.goodreads.services.util.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,17 +26,19 @@ public class ReviewController extends BaseController {
     }
 
     @GetMapping("/books/reviews/{id}")
-    public ResponseEntity<List<ReviewWithUserDTO>> getBookReviews(@PathVariable long id, HttpSession session) {
+    public ResponseEntity<PageDTO> getBookReviews(@RequestParam int page, @PathVariable long id, HttpSession session) {
         validateSession(session);
+        Helper.validatePage(page);
         List<ReviewWithUserDTO> responseList = reviewService.getBookReviews(id);
-        return ResponseEntity.ok(responseList);
+        return ResponseEntity.ok(Helper.createPage(responseList, page));
     }
 
     @GetMapping("/users/reviews/{id}")
-    public ResponseEntity<List<UserReviewsResponseDTO>> getUserReviews(@PathVariable long id, HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<PageDTO> getUserReviews(@RequestParam int page, @PathVariable long id, HttpSession session, HttpServletRequest request) {
         validateSession(session);
+        Helper.validatePage(page);
         List<UserReviewsResponseDTO> responseList = reviewService.getUserReviews(id);
-        return ResponseEntity.ok(responseList);
+        return ResponseEntity.ok(Helper.createPage(responseList, page));
     }
 
 }

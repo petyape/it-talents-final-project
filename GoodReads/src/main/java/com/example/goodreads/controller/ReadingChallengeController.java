@@ -1,15 +1,14 @@
 package com.example.goodreads.controller;
 
+import com.example.goodreads.model.dto.PageDTO;
 import com.example.goodreads.model.dto.readingChallengeDTO.ChallengeResponseDTO;
 import com.example.goodreads.model.dto.readingChallengeDTO.EnterChallengeDTO;
 import com.example.goodreads.model.dto.readingChallengeDTO.ParticipantDTO;
 import com.example.goodreads.services.ReadingChallengeService;
+import com.example.goodreads.services.util.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -36,10 +35,11 @@ public class ReadingChallengeController extends BaseController {
     }
 
     @GetMapping("/challenge/participants")
-    public ResponseEntity<List<ParticipantDTO>> getParticipants(HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<PageDTO> getParticipants(@RequestParam int page, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
+        Helper.validatePage(page);
         List<ParticipantDTO> dtoList = challengeService.getParticipants();
-        return ResponseEntity.ok(dtoList);
+        return ResponseEntity.ok(Helper.createPage(dtoList, page));
     }
 
 }
