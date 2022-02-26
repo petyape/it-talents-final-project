@@ -2,6 +2,7 @@ package com.example.goodreads.controller;
 
 import com.example.goodreads.exceptions.*;
 import com.example.goodreads.model.dto.ErrorDTO;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,26 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(value ={ConstraintViolationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorDTO handleConstraintViolation(Exception e){
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMsg("Invalid request parameters!");
+        dto.setStatus(HttpStatus.BAD_REQUEST.value());
+        return dto;
+    }
+
+//    @ExceptionHandler(value ={MethodArgumentNotValidException.class})
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ResponseBody
+//    public ErrorDTO handleMethodArgumentNotValid(Exception e){
+//        ErrorDTO dto = new ErrorDTO();
+//        dto.setMsg("Invalid request parameters!");
+//        dto.setStatus(HttpStatus.BAD_REQUEST.value());
+//        return dto;
+//    }
 
     @ExceptionHandler(value ={UnauthorizedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

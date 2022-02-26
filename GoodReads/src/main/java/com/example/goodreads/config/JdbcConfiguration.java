@@ -14,7 +14,7 @@ public class JdbcConfiguration {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://localhost:3306/GoodReadsDB");
         dataSource.setUsername("root");
-        dataSource.setPassword("ssevdeva");
+        dataSource.setPassword("root");
 
         return dataSource;
     }
