@@ -43,14 +43,16 @@ public class ReadingChallengeService {
         return mapper.map(readingChallengeRepository.save(entry), ChallengeResponseDTO.class);
     }
 
-    public String quitChallenge(long userId) {
+    public ParticipantDTO quitChallenge(long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         Optional<ReadingChallenge> opt = readingChallengeRepository.findReadingChallengeByUser(user);
         if (opt.isEmpty()) {
             throw new BadRequestException("User does not participate in challenge!");
         }
         readingChallengeRepository.delete(opt.get());
-        return "Successfully deleted challenge entry with id " + opt.get().getEntryId() + ".";
+        ParticipantDTO dto = mapper.map(opt.get(), ParticipantDTO.class);
+        dto.setFirstName(opt.get().getUser().getFirstName());
+        return dto;
     }
 
     public List<ParticipantDTO> getParticipants() {

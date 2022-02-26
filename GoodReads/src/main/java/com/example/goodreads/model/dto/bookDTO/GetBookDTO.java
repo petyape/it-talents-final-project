@@ -16,6 +16,7 @@ public class GetBookDTO {
 
     private long bookId;
     private String title;
+    private String coverUrl;
     private String genreName;
     private String description;
     private List<AuthorWithNameDTO> authors;

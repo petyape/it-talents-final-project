@@ -29,10 +29,10 @@ public class ReadingChallengeController extends BaseController {
     }
 
     @PutMapping("/challenge/quit")
-    public ResponseEntity<String> quitChallenge(HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<ParticipantDTO> quitChallenge(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        String msg = challengeService.quitChallenge((long) session.getAttribute(USER_ID));
-        return ResponseEntity.ok(msg);
+        ParticipantDTO dto = challengeService.quitChallenge((long) session.getAttribute(USER_ID));
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/challenge/participants")

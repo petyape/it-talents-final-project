@@ -98,10 +98,10 @@ public class BookController extends BaseController {
     }
 
     @DeleteMapping("/books/delete/{id}")
-    public ResponseEntity<String> deleteBook(@PathVariable long id, HttpSession session, HttpServletRequest request){
+    public ResponseEntity<BookResponseDTO> deleteBook(@PathVariable long id, HttpSession session, HttpServletRequest request){
         validateSession(session, request);
-        String msg = bookService.deleteBook(id, (long) session.getAttribute(USER_ID));
-        return ResponseEntity.ok(msg);
+        BookResponseDTO dto = bookService.deleteBook(id, (long) session.getAttribute(USER_ID));
+        return ResponseEntity.ok(dto);
     }
 
 }

@@ -22,7 +22,7 @@ public class FriendshipService {
     private ModelMapper mapper;
 
     @Transactional
-    public String addAsFriend(long userId, long friendId) {
+    public UserResponseDTO addAsFriend(long userId, long friendId) {
         if(userId == friendId){
             throw new BadRequestException("Users cannot become friends with themselves!");
         }
@@ -34,11 +34,12 @@ public class FriendshipService {
         }
         user.getFriends().add(friend);
         friend.getFriends().add(user);
-        return user.getFirstName() + " became friends with " + friend.getFirstName() + ".";
+        UserResponseDTO dto = mapper.map(friend, UserResponseDTO.class);
+        return dto;
     }
 
     @Transactional
-    public String removeFriend(long userId, long friendId){
+    public UserResponseDTO removeFriend(long userId, long friendId){
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         User friend = userRepository.findById(friendId).orElseThrow(() -> (new NotFoundException("User not found!")));
 
@@ -50,7 +51,8 @@ public class FriendshipService {
         }
         user.getFriends().remove(friend);
         friend.getFriends().remove(user);
-        return "Successfully removed " + friend.getFirstName() + " from friends.";
+        UserResponseDTO dto = mapper.map(friend, UserResponseDTO.class);
+        return dto;
     }
 
     public List<UserResponseDTO> getFriends(long userId){

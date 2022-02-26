@@ -16,19 +16,19 @@ public class FriendshipController extends BaseController {
     private FriendshipService friendshipService;
 
     @PutMapping("/friends/add/{friendId}")
-    public ResponseEntity<String> addAsFriend (@PathVariable long friendId,
+    public ResponseEntity<UserResponseDTO> addAsFriend (@PathVariable long friendId,
                                                HttpSession session, HttpServletRequest request){
         UserController.validateSession(session, request);
-        String msg = friendshipService.addAsFriend((long) session.getAttribute(USER_ID), friendId);
-        return ResponseEntity.ok(msg);
+        UserResponseDTO dto = friendshipService.addAsFriend((long) session.getAttribute(USER_ID), friendId);
+        return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/friends/remove/{friendId}")
-    public ResponseEntity<String> removeFriend (@PathVariable long friendId,
+    public ResponseEntity<UserResponseDTO> removeFriend (@PathVariable long friendId,
                                                 HttpSession session, HttpServletRequest request){
         UserController.validateSession(session, request);
-        String msg = friendshipService.removeFriend((long) session.getAttribute(USER_ID), friendId);
-        return ResponseEntity.ok(msg);
+        UserResponseDTO dto = friendshipService.removeFriend((long) session.getAttribute(USER_ID), friendId);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/friends/show/{id}")

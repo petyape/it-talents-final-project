@@ -175,14 +175,15 @@ public class BookService {
     }
 
     @Transactional
-    public String deleteBook(long bookId, long userId) {
+    public BookResponseDTO deleteBook(long bookId, long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         if (!user.getIsAdmin()) {
             throw new DeniedPermissionException("Operation is not allowed!");
         }
         Book book = bookRepository.findById(bookId).orElseThrow(() -> (new NotFoundException("Book not found!")));
         bookRepository.delete(book);
-        return "Successfully deleted book with id " + book.getBookId() + ".";
+        BookResponseDTO dto = mapper.map(book, BookResponseDTO.class);
+        return dto;
     }
 
     @SneakyThrows

@@ -1,7 +1,9 @@
 package com.example.goodreads.controller;
 
 import com.example.goodreads.exceptions.BadRequestException;
+import com.example.goodreads.model.dto.ImageDTO;
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
+import com.example.goodreads.model.dto.bookDTO.BookshelvesDTO;
 import com.example.goodreads.model.dto.userDTO.*;
 import com.example.goodreads.services.UserService;
 import com.example.goodreads.services.util.Helper;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -81,11 +84,12 @@ public class UserController extends BaseController {
     }
 
     @PutMapping("/users/edit/photo")
-    public String uploadPhoto(@RequestParam(name = "file") MultipartFile file,
-                              HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<ImageDTO> uploadPhoto(@RequestParam(name = "file") MultipartFile file,
+                                HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
         Helper.validateFile(file);
-        return userService.uploadFile(file, (long) session.getAttribute(USER_ID));
+        ImageDTO dto = userService.uploadFile(file, (long) session.getAttribute(USER_ID));
+        return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/users/sign_out")
@@ -96,10 +100,10 @@ public class UserController extends BaseController {
     }
 
     @DeleteMapping("/users/destroy")
-    public ResponseEntity<String> deleteAccount(HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<UserResponseDTO> deleteAccount(HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
-        String msg = userService.deleteUser((long) session.getAttribute(USER_ID));
-        return ResponseEntity.ok(msg);
+        UserResponseDTO dto = userService.deleteUser((long) session.getAttribute(USER_ID));
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/users/bookshelves/{bookshelf_id}")
@@ -109,6 +113,14 @@ public class UserController extends BaseController {
         long userId = (long) session.getAttribute(USER_ID);
         List<BookResponseDTO> dto = userService.getUserBookshelf(bookshelfId, userId);
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/users/bookshelves/all")
+    public ResponseEntity<BookshelvesDTO> getAllUserBookshelves(HttpSession session, HttpServletRequest request) {
+        validateSession(session, request);
+        long userId = (long) session.getAttribute(USER_ID);
+        BookshelvesDTO shelves = userService.getBookshelves(userId);
+        return ResponseEntity.ok(shelves);
     }
 
     @GetMapping("users/show/{id}")

@@ -4,7 +4,9 @@ import com.example.goodreads.exceptions.BadRequestException;
 import com.example.goodreads.exceptions.DeniedPermissionException;
 import com.example.goodreads.exceptions.NotFoundException;
 import com.example.goodreads.exceptions.UnauthorizedException;
+import com.example.goodreads.model.dto.ImageDTO;
 import com.example.goodreads.model.dto.bookDTO.BookResponseDTO;
+import com.example.goodreads.model.dto.bookDTO.BookshelvesDTO;
 import com.example.goodreads.model.dto.userDTO.*;
 import com.example.goodreads.model.entities.*;
 import com.example.goodreads.model.repository.*;
@@ -46,6 +48,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private ModelMapper mapper;
+    @Autowired
+    private UsersBooksRepository usersBooksRepository;
 
     private static final String PROFILE_PHOTOS = "profile_photos";
 
@@ -81,7 +85,7 @@ public class UserService {
             throw new DeniedPermissionException("Confirmed password does not match the provided password!");
         }
         Helper.validatePassword(password);
-        if(firstName == null || firstName.isBlank()){
+        if (firstName == null || firstName.isBlank()) {
             throw new BadRequestException("Name is mandatory!");
         }
         if (firstName.trim().length() < 2) {
@@ -182,7 +186,7 @@ public class UserService {
     }
 
     @SneakyThrows
-    public String uploadFile(MultipartFile file, long loggedUserId) {
+    public ImageDTO uploadFile(MultipartFile file, long loggedUserId) {
         if (file == null) {
             throw new BadRequestException("There is no photo provided!");
         }
@@ -192,11 +196,11 @@ public class UserService {
         User user = userRepository.findById(loggedUserId).orElseThrow(() -> (new NotFoundException("User not found!")));
         user.setPhotoUrl(photoName);
         userRepository.save(user);
-        return photoName;
+        return new ImageDTO(user.getPhotoUrl());
     }
 
     @Transactional
-    public String deleteUser(long userId) {
+    public UserResponseDTO deleteUser(long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         Optional<ReadingChallenge> opt = readingChallengeRepository.findReadingChallengeByUser(user);
         if (opt.isPresent()) {
@@ -205,16 +209,12 @@ public class UserService {
         userRepository.delete(user);
         addressRepository.deleteById(user.getAddress().getAddressId());
         privacyRepository.deleteById(user.getPrivacy().getPrivacyId());
-        return "Successfully deleted user with id " + user.getUserId() + ".";
+        return mapper.map(user, UserResponseDTO.class);
     }
 
     public List<BookResponseDTO> getUserBookshelf(long id, long userId) {
-        User user = userRepository
-                .findById(userId)
-                .orElseThrow(() -> (new NotFoundException("User not found!")));
-        Bookshelf shelf = bookshelfRepository
-                .findById(id)
-                .orElseThrow(() -> (new NotFoundException("Bookshelf not found!")));;
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        Bookshelf shelf = bookshelfRepository.findById(id).orElseThrow(() -> (new NotFoundException("Bookshelf not found!")));
         List<Book> userBooks = bookRepository.findBooksByUserIdAndBookshelfId(userId, id);
         List<BookResponseDTO> booksPerUserDTO = new ArrayList<>();
         userBooks.forEach(b -> {
@@ -222,6 +222,31 @@ public class UserService {
             booksPerUserDTO.add(dto);
         });
         return booksPerUserDTO;
+    }
+
+    public BookshelvesDTO getBookshelves(long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
+        List<UsersBooks> userBooks = usersBooksRepository.findByUser(user);
+        BookshelvesDTO shelves = new BookshelvesDTO();
+        BookResponseDTO dto = new BookResponseDTO();
+        for (UsersBooks book : userBooks) {
+            if (book.getBookshelf().getName().equalsIgnoreCase("Read")) {
+                dto.setTitle(book.getBook().getTitle());
+                dto.setBookId(book.getBook().getBookId());
+                shelves.addReadBook(dto);
+            }
+            if (book.getBookshelf().getName().equalsIgnoreCase("Want to read")) {
+                dto.setTitle(book.getBook().getTitle());
+                dto.setBookId(book.getBook().getBookId());
+                shelves.addWantToReadBook(dto);
+            }
+            if(book.getBookshelf().getName().equalsIgnoreCase("Reading")){
+                dto.setTitle(book.getBook().getTitle());
+                dto.setBookId(book.getBook().getBookId());
+                shelves.addReadingBook(dto);
+            }
+        }
+        return shelves;
     }
 
     public GetUserDTO getUser(long userId, long loggedUserId) {
@@ -276,7 +301,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> (new NotFoundException("User not found!")));
         File f = new File(PROFILE_PHOTOS + File.separator + user.getPhotoUrl());
-        if(!f.exists()){
+        if (!f.exists()) {
             throw new NotFoundException("Profile photo does not exist");
         }
         return f;

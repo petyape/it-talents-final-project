@@ -121,14 +121,15 @@ public class QuoteService {
         return dtoList;
     }
 
-    public String deleteQuote(long quoteId, long userId) {
+    public QuoteResponseDTO deleteQuote(long quoteId, long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         Quote quote = quoteRepository.findById(quoteId).orElseThrow(() -> (new NotFoundException("Quote not found!")));
         if (quote.getUser() != user) {
             throw new UnauthorizedException("Quotes can be deleted by their publishers only!");
         }
         quoteRepository.delete(quote);
-        return "Successfully deleted quote with id " + quote.getQuoteId() + ".";
+        QuoteResponseDTO dto = mapper.map(quote, QuoteResponseDTO.class);
+        return dto;
     }
 
 }
