@@ -1,7 +1,9 @@
 package com.example.goodreads.controller;
 
+import com.example.goodreads.model.dto.PageDTO;
 import com.example.goodreads.model.dto.userDTO.UserResponseDTO;
 import com.example.goodreads.services.FriendshipService;
+import com.example.goodreads.services.util.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +34,13 @@ public class FriendshipController extends BaseController {
     }
 
     @GetMapping("/friends/show/{id}")
-    public ResponseEntity<List<UserResponseDTO>> getFriends(@PathVariable long id,
-                                                            HttpSession session, HttpServletRequest request){
+    public ResponseEntity<PageDTO> getFriends( @PathVariable long id, @RequestParam int page,
+                                              HttpSession session, HttpServletRequest request){
         UserController.validateSession(session, request);
+        Helper.validatePage(page);
         List<UserResponseDTO> userFriends = friendshipService.getFriends(id);
-        return ResponseEntity.ok(userFriends);
+        PageDTO pageDTO = Helper.createPage(userFriends, page);
+        return ResponseEntity.ok(pageDTO);
     }
 
 }

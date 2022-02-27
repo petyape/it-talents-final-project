@@ -1,13 +1,13 @@
 package com.example.goodreads.controller;
 
+import com.example.goodreads.model.dto.PageDTO;
 import com.example.goodreads.model.dto.genreDTO.GenreResponseDTO;
 import com.example.goodreads.services.GenreService;
+import com.example.goodreads.services.util.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -27,10 +27,12 @@ public class GenreController extends BaseController {
     }
 
     @GetMapping("/genres")
-    public ResponseEntity<List<GenreResponseDTO>> getAllGenres(HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<PageDTO> getAllGenres(@RequestParam int page, HttpSession session, HttpServletRequest request) {
         validateSession(session, request);
+        Helper.validatePage(page);
         List<GenreResponseDTO> dtoList = genreService.getAllGenres();
-        return ResponseEntity.ok(dtoList);
+        PageDTO pageDTO = Helper.createPage(dtoList, page);
+        return ResponseEntity.ok(pageDTO);
     }
 
     @GetMapping("/genres/fav")
