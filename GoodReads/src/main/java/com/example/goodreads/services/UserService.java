@@ -228,8 +228,8 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> (new NotFoundException("User not found!")));
         List<UsersBooks> userBooks = usersBooksRepository.findByUser(user);
         BookshelvesDTO shelves = new BookshelvesDTO();
-        BookResponseDTO dto = new BookResponseDTO();
         for (UsersBooks book : userBooks) {
+            BookResponseDTO dto = new BookResponseDTO();
             if (book.getBookshelf().getName().equalsIgnoreCase("Read")) {
                 dto.setTitle(book.getBook().getTitle());
                 dto.setBookId(book.getBook().getBookId());
@@ -240,7 +240,7 @@ public class UserService {
                 dto.setBookId(book.getBook().getBookId());
                 shelves.addWantToReadBook(dto);
             }
-            if(book.getBookshelf().getName().equalsIgnoreCase("Reading")){
+            if(book.getBookshelf().getName().equalsIgnoreCase("Currently reading")){
                 dto.setTitle(book.getBook().getTitle());
                 dto.setBookId(book.getBook().getBookId());
                 shelves.addReadingBook(dto);
